@@ -1,4 +1,4 @@
-# Machine Box Go SDK
+# Machine Box Go SDK [![GoDoc](https://godoc.org/github.com/machinebox/sdk-go?status.svg)](http://godoc.org/github.com/machinebox/sdk-go)
 
 The official Machine Box Go SDK provides Go clients for each box.
 
