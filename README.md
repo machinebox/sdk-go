@@ -35,7 +35,7 @@ if err != nil {
 ```
 
 A more advanced solution is to get notified whenever the status of a box changes
-using the boxutil.StatusChan feature:
+using the `boxutil.StatusChan` feature:
 
 ```go
 go func(){
