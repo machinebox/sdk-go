@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/machinebox/mb/exp/sdk-go/nudebox"
+	"github.com/machinebox/sdk-go/nudebox"
 	"github.com/matryer/is"
 )
 

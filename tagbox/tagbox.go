@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/machinebox/mb/exp/sdk-go/boxutil"
+	"github.com/machinebox/sdk-go/boxutil"
 	"github.com/pkg/errors"
 )
 

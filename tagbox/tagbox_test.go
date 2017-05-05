@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/machinebox/mb/exp/sdk-go/tagbox"
+	"github.com/machinebox/sdk-go/tagbox"
 	"github.com/matryer/is"
 )
 

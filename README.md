@@ -7,13 +7,13 @@ The official Machine Box Go SDK provides Go clients for each box.
 Go get the repo:
 
 ```
-go get github.com/machinebox/mb/exp/sdk-go
+go get github.com/machinebox/sdk-go
 ```
 
 Then import the package of the box you wish to use:
 
 ```go
-import "github.com/machinebox/mb/exp/sdk-go/facebox"
+import "github.com/machinebox/sdk-go/facebox"
 ```
 
 Then create a client, providing the address of the running box.
