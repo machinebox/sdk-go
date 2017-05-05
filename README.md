@@ -25,7 +25,7 @@ faceboxClient := facebox.New("http://localhost:8080")
 ```
 
 It is recommended that you consider the startup time a box needs before it
-is ready. The simplest approach is to use the boxutil.WaitForReady function:
+is ready. The simplest approach is to use the `boxutil.WaitForReady` function:
 
 ```go
 err := boxutil.WaitForReady(ctx, faceboxClient)
