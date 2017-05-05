@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/machinebox/sdk-go/boxutil"
+	"github.com/machinebox/sdk-go/x/boxutil"
 )
 
 // Face represents a face in an image.
