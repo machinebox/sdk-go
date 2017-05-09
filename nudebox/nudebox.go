@@ -57,7 +57,7 @@ func (c *Client) Info() (*boxutil.Info, error) {
 	return &info, nil
 }
 
-// Check gets the tags for the image data provided.
+// Check gets the nudity probability for the image data provided.
 func (c *Client) Check(image io.Reader) (float64, error) {
 	var buf bytes.Buffer
 	w := multipart.NewWriter(&buf)
@@ -86,7 +86,7 @@ func (c *Client) Check(image io.Reader) (float64, error) {
 	return c.parseCheckResponse(resp.Body)
 }
 
-// CheckURL gets the tags for the image at the specified URL.
+// CheckURL gets the nudity probability for the image at the specified URL.
 func (c *Client) CheckURL(imageURL *url.URL) (float64, error) {
 	u, err := url.Parse(c.addr + "/nudebox/check")
 	if err != nil {
