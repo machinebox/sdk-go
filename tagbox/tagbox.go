@@ -39,7 +39,7 @@ func New(addr string) *Client {
 	return &Client{
 		addr: addr,
 		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout: 1 * time.Minute,
 		},
 	}
 }
