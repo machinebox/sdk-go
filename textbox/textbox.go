@@ -133,7 +133,7 @@ func (c *Client) Check(r io.Reader) (*Analysis, error) {
 	}, nil
 }
 
-// ErrTextbox represents an error from nudebox.
+// ErrTextbox represents an error from textbox.
 type ErrTextbox string
 
 func (e ErrTextbox) Error() string {
