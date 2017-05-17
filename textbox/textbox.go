@@ -1,3 +1,4 @@
+// Package textbox provides a client for accessing textbox services.
 package textbox
 
 import (
