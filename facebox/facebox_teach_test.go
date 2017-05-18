@@ -19,6 +19,7 @@ func TestTeachURL(t *testing.T) {
 	is.NoErr(err)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		is.Equal(r.URL.Path, "/facebox/teach")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		is.Equal(r.FormValue("url"), imageURL.String())
 		is.Equal(r.FormValue("name"), "John Lennon")
 		is.Equal(r.FormValue("id"), "john1.jpg")
@@ -38,6 +39,7 @@ func TestTeachURLError(t *testing.T) {
 	is.NoErr(err)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		is.Equal(r.URL.Path, "/facebox/teach")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		is.Equal(r.FormValue("url"), imageURL.String())
 		is.Equal(r.FormValue("name"), "John Lennon")
 		is.Equal(r.FormValue("id"), "john1.jpg")
@@ -58,6 +60,7 @@ func TestTeachImage(t *testing.T) {
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		is.Equal(r.URL.Path, "/facebox/teach")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		is.Equal(r.FormValue("name"), "John Lennon")
 		is.Equal(r.FormValue("id"), "john1.jpg")
 		f, _, err := r.FormFile("file")
@@ -83,6 +86,7 @@ func TestTeachImageError(t *testing.T) {
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		is.Equal(r.URL.Path, "/facebox/teach")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		is.Equal(r.FormValue("name"), "John Lennon")
 		is.Equal(r.FormValue("id"), "john1.jpg")
 		f, _, err := r.FormFile("file")

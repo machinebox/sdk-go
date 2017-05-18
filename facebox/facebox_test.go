@@ -15,6 +15,7 @@ func TestInfo(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		is.Equal(r.Method, "GET")
 		is.Equal(r.URL.Path, "/info")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		io.WriteString(w, `{
 			"name": "facebox",
 			"version": 1,
