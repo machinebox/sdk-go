@@ -116,6 +116,7 @@ func (c *Client) CheckURL(imageURL *url.URL) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
