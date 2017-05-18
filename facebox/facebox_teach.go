@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -44,7 +46,13 @@ func (c *Client) Teach(image io.Reader, id, name string) error {
 	if !u.IsAbs() {
 		return errors.New("box address must be absolute")
 	}
-	resp, err := c.HTTPClient.Post(u.String(), w.FormDataContentType(), &buf)
+	req, err := http.NewRequest("POST", u.String(), &buf)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -69,12 +77,21 @@ func (c *Client) TeachURL(imageURL *url.URL, id, name string) error {
 	form.Set("url", imageURL.String())
 	form.Set("name", name)
 	form.Set("id", id)
-	resp, err := c.HTTPClient.PostForm(u.String(), form)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	return c.parseResponse(resp.Body)
+	err = c.parseResponse(resp.Body)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) parseResponse(r io.Reader) error {

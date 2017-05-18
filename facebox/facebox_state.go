@@ -5,7 +5,9 @@ import (
 	"errors"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"net/url"
+	"strings"
 )
 
 // OpenState opens the state file for reading.
@@ -18,7 +20,12 @@ func (c *Client) OpenState() (io.ReadCloser, error) {
 	if !u.IsAbs() {
 		return nil, errors.New("box address must be absolute")
 	}
-	resp, err := c.HTTPClient.Get(u.String())
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +54,13 @@ func (c *Client) PostState(r io.Reader) error {
 	if !u.IsAbs() {
 		return errors.New("box address must be absolute")
 	}
-	resp, err := c.HTTPClient.Post(u.String(), w.FormDataContentType(), &buf)
+	req, err := http.NewRequest("POST", u.String(), &buf)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -70,10 +83,19 @@ func (c *Client) PostStateURL(stateURL *url.URL) error {
 	}
 	form := url.Values{}
 	form.Set("url", stateURL.String())
-	resp, err := c.HTTPClient.PostForm(u.String(), form)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	return c.parseResponse(resp.Body)
+	err = c.parseResponse(resp.Body)
+	if err != nil {
+		return err
+	}
+	return nil
 }

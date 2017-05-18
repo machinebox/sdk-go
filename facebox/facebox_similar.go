@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -32,7 +34,13 @@ func (c *Client) Similar(image io.Reader) ([]Similar, error) {
 	if !u.IsAbs() {
 		return nil, errors.New("box address must be absolute")
 	}
-	resp, err := c.HTTPClient.Post(u.String(), w.FormDataContentType(), &buf)
+	req, err := http.NewRequest("POST", u.String(), &buf)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +62,12 @@ func (c *Client) SimilarURL(imageURL *url.URL) ([]Similar, error) {
 	}
 	form := url.Values{}
 	form.Set("url", imageURL.String())
-	resp, err := c.HTTPClient.PostForm(u.String(), form)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
