@@ -63,7 +63,12 @@ func (c *Client) Info() (*boxutil.Info, error) {
 	if !u.IsAbs() {
 		return nil, errors.New("box address must be absolute")
 	}
-	resp, err := c.HTTPClient.Get(u.String())
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
