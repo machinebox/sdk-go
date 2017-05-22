@@ -76,6 +76,35 @@ func (c *Client) SimilarURL(imageURL *url.URL) ([]Similar, error) {
 	return c.parseSimilarResponse(resp.Body)
 }
 
+// SimilarID returns similar faces based on the ID provided
+func (c *Client) SimilarID(id string) ([]Similar, error) {
+	u, err := url.Parse(c.addr + "/facebox/similar")
+	if err != nil {
+		return nil, err
+	}
+	if !u.IsAbs() {
+		return nil, errors.New("box address must be absolute")
+	}
+	if id == "" {
+		return nil, errors.New("id can not be empty")
+	}
+	q := u.Query()
+	q.Set("id", id)
+	u.RawQuery = q.Encode()
+
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return c.parseSimilarResponse(resp.Body)
+}
+
 func (c *Client) parseSimilarResponse(r io.Reader) ([]Similar, error) {
 	var similarResponse struct {
 		Success bool
