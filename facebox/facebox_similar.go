@@ -91,7 +91,6 @@ func (c *Client) SimilarID(id string) ([]Similar, error) {
 	q := u.Query()
 	q.Set("id", id)
 	u.RawQuery = q.Encode()
-
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err

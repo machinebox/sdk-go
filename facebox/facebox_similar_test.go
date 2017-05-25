@@ -158,3 +158,46 @@ func TestSimilarImageError(t *testing.T) {
 	is.Equal(err.Error(), "facebox: something went wrong")
 
 }
+
+func TestSimilarID(t *testing.T) {
+	is := is.New(t)
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		is.Equal(r.URL.Path, "/facebox/similar")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		is.Equal(r.FormValue("id"), "abc123")
+		io.WriteString(w, `{
+			"success": true,
+			"similarCount": 3,
+			"similar": [
+				{
+					"id": "file1.jpg",
+					"name": "Ringo Starr"
+				},
+				{
+					"id": "file2.jpg",
+					"name": "Ringo Starr"
+				},
+				{
+					"id": "file3.jpg",
+					"name": "Ringo Starr"
+				}
+			]
+		}`)
+	}))
+	defer srv.Close()
+
+	fb := facebox.New(srv.URL)
+	similar, err := fb.SimilarID("abc123")
+	is.NoErr(err)
+
+	is.Equal(len(similar), 3)
+	is.Equal(similar[0].ID, "file1.jpg")
+	is.Equal(similar[0].Name, "Ringo Starr")
+
+	is.Equal(similar[1].ID, "file2.jpg")
+	is.Equal(similar[1].Name, "Ringo Starr")
+
+	is.Equal(similar[2].ID, "file3.jpg")
+	is.Equal(similar[2].Name, "Ringo Starr")
+}
