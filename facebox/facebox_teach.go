@@ -128,45 +128,6 @@ func (c *Client) Remove(id string) error {
 	return nil
 }
 
-// Rename allows to change the name for a given face
-func (c *Client) Rename(id, name string) error {
-	if id == "" {
-		return errors.New("id can not be empty")
-	}
-	if name == "" {
-		return errors.New("name can not be empty")
-	}
-	u, err := url.Parse(c.addr + "/facebox/teach")
-	if err != nil {
-		return err
-	}
-	if !u.IsAbs() {
-		return errors.New("box address must be absolute")
-	}
-	form := url.Values{}
-	form.Set("name", name)
-
-	q := u.Query()
-	u.Path = u.Path + "/" + id
-	u.RawQuery = q.Encode()
-	req, err := http.NewRequest("PATCH", u.String(), strings.NewReader(form.Encode()))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (c *Client) parseResponse(r io.Reader) error {
 	var response struct {
 		Success bool

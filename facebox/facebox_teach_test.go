@@ -126,22 +126,3 @@ func TestRemove(t *testing.T) {
 	err := fb.Remove("john1.jpg")
 	is.NoErr(err)
 }
-
-func TestRename(t *testing.T) {
-	is := is.New(t)
-
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		is.Equal(r.URL.Path, "/facebox/teach/john1.jpg")
-		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
-		is.Equal(r.Method, "PATCH")
-		is.Equal(r.FormValue("name"), "Sir John L")
-		io.WriteString(w, `{
-			"success": true
-		}`)
-	}))
-	defer srv.Close()
-
-	fb := facebox.New(srv.URL)
-	err := fb.Rename("john1.jpg", "Sir John L")
-	is.NoErr(err)
-}
