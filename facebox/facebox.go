@@ -79,7 +79,7 @@ func (c *Client) Info() (*boxutil.Info, error) {
 	return &info, nil
 }
 
-// ErrFacebox represents an error from nudebox.
+// ErrFacebox represents an error from facebox.
 type ErrFacebox string
 
 func (e ErrFacebox) Error() string {
