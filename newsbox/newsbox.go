@@ -24,9 +24,9 @@ type Analysis struct {
 
 // Title is the response object for the title analysis.
 type Title struct {
-	// Decision is the string representing the decision could be bias/unsure/impartial
+	// Decision is the string representing the decision could be bias/unsure/impartial.
 	Decision string `json:"decision,omitempty"`
-	// Score is the numeric score of the decision is between 0.00 (bias) and 1.00 (impartial)
+	// Score is the numeric score of the decision is between 0.00 (bias) and 1.00 (impartial).
 	Score float64 `json:"score,omitempty"`
 	// Entities represents entities discovered in the text.
 	Entities []Entity `json:"entities,omitempty"`
@@ -34,21 +34,21 @@ type Title struct {
 
 // Content is the response object for the content analysis.
 type Content struct {
-	// Decision is the string representing the decision could be bias/unsure/impartial
+	// Decision is the string representing the decision could be bias/unsure/impartial.
 	Decision string `json:"decision,omitempty"`
-	// Score is the numeric score of the decision is between 0.00 (bias) and 1.00 (impartial)
+	// Score is the numeric score of the decision is between 0.00 (bias) and 1.00 (impartial).
 	Score float64 `json:"score,omitempty"`
 	// Entities represents entities discovered in the text.
 	Entities []Entity `json:"entities,omitempty"`
-	// Keywords are the most relevant keywords extracted from the text
+	// Keywords are the most relevant keywords extracted from the text.
 	Keywords []Keyword `json:"keywords"`
 }
 
 // Domain is the response object for the domain analysis.
 type Domain struct {
-	// Domain is the domain extracted from the URL
+	// Domain is the domain extracted from the URL.
 	Domain string `json:"domain,omitempty"`
-	// Category is one of the listed on the API docs
+	// Category is one of the listed on the API docs.
 	Category string `json:"category,omitempty"`
 }
 
