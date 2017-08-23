@@ -14,14 +14,15 @@ import (
 
 // Analysis represents an analysis of title, content and domain.
 type Analysis struct {
-	// Title is the response object for the title analysis
+	// Title is the response object for the title analysis.
 	Title Title `json:"title"`
-	// Content is the response object for the content analysis
+	// Content is the response object for the content analysis.
 	Content Content `json:"content"`
-	// Domain is the response object for the domain analysis
+	// Domain is the response object for the domain analysis.
 	Domain Domain `json:"domain"`
 }
 
+// Title is the response object for the title analysis.
 type Title struct {
 	// Decision is the string representing the decision could be bias/unsure/impartial
 	Decision string `json:"decision,omitempty"`
@@ -31,6 +32,7 @@ type Title struct {
 	Entities []Entity `json:"entities,omitempty"`
 }
 
+// Content is the response object for the content analysis.
 type Content struct {
 	// Decision is the string representing the decision could be bias/unsure/impartial
 	Decision string `json:"decision,omitempty"`
@@ -42,6 +44,7 @@ type Content struct {
 	Keywords []Keyword `json:"keywords"`
 }
 
+// Domain is the response object for the domain analysis.
 type Domain struct {
 	// Domain is the domain extracted from the URL
 	Domain string `json:"domain,omitempty"`
