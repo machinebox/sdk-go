@@ -1,4 +1,4 @@
-package newsbox_test
+package fakenewsbox_test
 
 import (
 	"io"
@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/machinebox/sdk-go/newsbox"
+	"github.com/machinebox/sdk-go/fakenewsbox"
 	"github.com/matryer/is"
 )
 
@@ -122,7 +122,7 @@ func TestCheck(t *testing.T) {
 	is := is.New(t)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		is.Equal(r.Method, "POST")
-		is.Equal(r.URL.Path, "/newsbox/check")
+		is.Equal(r.URL.Path, "/fakenewsbox/check")
 		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		io.WriteString(w, result)
 	}))
@@ -130,7 +130,7 @@ func TestCheck(t *testing.T) {
 	u, err := url.Parse("http://www.bbc.co.uk/news/technology-41011662")
 	is.NoErr(err)
 
-	tb := newsbox.New(srv.URL)
+	tb := fakenewsbox.New(srv.URL)
 	res, err := tb.Check(`China relaunches world's fastest train`,
 		`The top speed of the Fuxing or "rejuvenation" bullet trains was capped at 300km/h (186mph) in 2011 following two crashes that killed 40 people.
 From next week, some of the trains will once again be allowed to run at a higher speed of about 350 km/h.`,

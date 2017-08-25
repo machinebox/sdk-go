@@ -1,5 +1,5 @@
-// Package newsbox provides a client for accessing newsbox services.
-package newsbox
+// Package fakenewsbox provides a client for accessing fakenewsbox services.
+package fakenewsbox
 
 import (
 	"encoding/json"
@@ -114,9 +114,9 @@ func (c *Client) Info() (*boxutil.Info, error) {
 	return &info, nil
 }
 
-// Check passes the text from the Reader to newsbox for analysis.
+// Check passes the text from the Reader to fakenewsbox for analysis.
 func (c *Client) Check(title string, content string, u *url.URL) (*Analysis, error) {
-	uu, err := url.Parse(c.addr + "/newsbox/check")
+	uu, err := url.Parse(c.addr + "/fakenewsbox/check")
 	if err != nil {
 		return nil, err
 	}
@@ -160,9 +160,9 @@ func (c *Client) Check(title string, content string, u *url.URL) (*Analysis, err
 	}, nil
 }
 
-// ErrNewsbox represents an error from newsbox.
+// ErrNewsbox represents an error from fakenewsbox.
 type ErrNewsbox string
 
 func (e ErrNewsbox) Error() string {
-	return "newsbox: " + string(e)
+	return "fakenewsbox: " + string(e)
 }
