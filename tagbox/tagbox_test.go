@@ -52,15 +52,20 @@ func TestCheckURL(t *testing.T) {
 				{"tag":"one", "confidence":0.9},
 				{"tag":"two", "confidence":0.8},
 				{"tag":"three", "confidence":0.7}
+			],
+			"custom_tags": [
+				{"tag": "monkeys","confidence": 0.58,"id": "monkeys2.jpg"},
+				{"tag": "bonobos","confidence": 0.4,"id": "monkeys3.jpg"}
 			]
 		}`)
 	}))
 	defer srv.Close()
 
 	tb := tagbox.New(srv.URL)
-	tags, err := tb.CheckURL(imageURL)
+	chk, err := tb.CheckURL(imageURL)
 	is.NoErr(err)
 
+	tags := chk.Tags
 	is.Equal(len(tags), 3)
 	is.Equal(tags[0].Tag, "one")
 	is.Equal(tags[0].Confidence, 0.9)
@@ -68,6 +73,15 @@ func TestCheckURL(t *testing.T) {
 	is.Equal(tags[1].Confidence, 0.8)
 	is.Equal(tags[2].Tag, "three")
 	is.Equal(tags[2].Confidence, 0.7)
+
+	ctags := chk.CustomTags
+	is.Equal(len(ctags), 2)
+	is.Equal(ctags[0].Tag, "monkeys")
+	is.Equal(ctags[0].Confidence, 0.58)
+	is.Equal(ctags[0].ID, "monkeys2.jpg")
+	is.Equal(ctags[1].Tag, "bonobos")
+	is.Equal(ctags[1].Confidence, 0.4)
+	is.Equal(ctags[1].ID, "monkeys3.jpg")
 
 }
 
@@ -119,8 +133,10 @@ func TestCheckImage(t *testing.T) {
 	defer srv.Close()
 
 	tb := tagbox.New(srv.URL)
-	tags, err := tb.Check(strings.NewReader(`(pretend this is image data)`))
+	chk, err := tb.Check(strings.NewReader(`(pretend this is image data)`))
 	is.NoErr(err)
+
+	tags := chk.Tags
 
 	is.Equal(len(tags), 3)
 	is.Equal(tags[0].Tag, "one")
