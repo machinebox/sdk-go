@@ -21,6 +21,8 @@ type Tag struct {
 	Tag string
 	// Confidence is a probability number between 0 and 1.
 	Confidence float64
+	// ID is unique identifier of the image, previosly teach
+	ID string
 }
 
 // Client is an HTTP client that can make requests to the box.
