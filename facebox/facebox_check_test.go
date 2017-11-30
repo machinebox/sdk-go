@@ -31,13 +31,15 @@ func TestCheckURL(t *testing.T) {
 					"rect": { "top": 0, "left": 0, "width": 120, "height": 120 },
 					"id": "file1.jpg",
 					"name": "John Lennon",
-					"matched": true
+					"matched": true,
+					"confidence": 0.8
 				},
 				{
 					"rect": { "top": 200, "left": 200, "width": 100, "height": 100 },
 					"id": "file6.jpg",
 					"name": "Ringo Starr",
-					"matched": true
+					"matched": true,
+					"confidence": 0.7
 				},
 				{
 					"rect": { "top": 50, "left": 50, "width": 100, "height": 100 },
@@ -60,6 +62,7 @@ func TestCheckURL(t *testing.T) {
 	is.Equal(faces[0].ID, "file1.jpg")
 	is.Equal(faces[0].Name, "John Lennon")
 	is.Equal(faces[0].Matched, true)
+	is.Equal(faces[0].Confidence, 0.8)
 
 	is.Equal(faces[1].Rect.Top, 200)
 	is.Equal(faces[1].Rect.Left, 200)
@@ -68,6 +71,7 @@ func TestCheckURL(t *testing.T) {
 	is.Equal(faces[1].ID, "file6.jpg")
 	is.Equal(faces[1].Name, "Ringo Starr")
 	is.Equal(faces[1].Matched, true)
+	is.Equal(faces[1].Confidence, 0.7)
 
 	is.Equal(faces[2].Rect.Top, 50)
 	is.Equal(faces[2].Rect.Left, 50)

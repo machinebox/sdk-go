@@ -13,10 +13,11 @@ import (
 
 // Face represents a face in an image.
 type Face struct {
-	Rect    Rect
-	ID      string
-	Name    string
-	Matched bool
+	Rect       Rect
+	ID         string
+	Name       string
+	Matched    bool
+	Confidence float64
 }
 
 // Rect represents the coordinates of a face within an image.
