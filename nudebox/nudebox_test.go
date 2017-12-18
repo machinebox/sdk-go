@@ -85,6 +85,30 @@ func TestCheckURLError(t *testing.T) {
 
 }
 
+func TestCheckBase64(t *testing.T) {
+	is := is.New(t)
+
+	base64Str := "base64Str"
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		is.Equal(r.URL.Path, "/nudebox/check")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		is.Equal(r.FormValue("base64"), base64Str)
+		io.WriteString(w, `{
+			"success": true,
+			"nude": 0.8
+		}`)
+	}))
+	defer srv.Close()
+
+	nb := nudebox.New(srv.URL)
+	nude, err := nb.CheckBase64(base64Str)
+	is.NoErr(err)
+
+	is.Equal(nude, 0.8)
+
+}
+
 func TestCheckImage(t *testing.T) {
 	is := is.New(t)
 

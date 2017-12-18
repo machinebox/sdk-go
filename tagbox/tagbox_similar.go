@@ -12,7 +12,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Similar checks the image in the io.Reader for similar images based on tag previously teach.
+// Similar checks the image in the io.Reader for similar
+// images based on tags previously taught.
 func (c *Client) Similar(image io.Reader) ([]Tag, error) {
 	var buf bytes.Buffer
 	w := multipart.NewWriter(&buf)
@@ -48,7 +49,8 @@ func (c *Client) Similar(image io.Reader) ([]Tag, error) {
 	return c.parseSimilarResponse(resp.Body)
 }
 
-// SimilarURL checks the image at the specified URL for similar  images based on tag previously teach.
+// SimilarURL checks the image at the specified URL for similar
+// images based on tags previously taught.
 func (c *Client) SimilarURL(imageURL *url.URL) ([]Tag, error) {
 	u, err := url.Parse(c.addr + "/tagbox/similar")
 	if err != nil {
@@ -62,6 +64,32 @@ func (c *Client) SimilarURL(imageURL *url.URL) ([]Tag, error) {
 	}
 	form := url.Values{}
 	form.Set("url", imageURL.String())
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return c.parseSimilarResponse(resp.Body)
+}
+
+// SimilarBase64 checks the image at the specified URL for similar
+// images based on tags previously taught.
+func (c *Client) SimilarBase64(data string) ([]Tag, error) {
+	u, err := url.Parse(c.addr + "/tagbox/similar")
+	if err != nil {
+		return nil, err
+	}
+	if !u.IsAbs() {
+		return nil, errors.New("box address must be absolute")
+	}
+	form := url.Values{}
+	form.Set("base64", data)
 	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err

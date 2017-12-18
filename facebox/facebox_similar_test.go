@@ -201,3 +201,41 @@ func TestSimilarID(t *testing.T) {
 	is.Equal(similar[2].ID, "file3.jpg")
 	is.Equal(similar[2].Name, "Ringo Starr")
 }
+
+func TestSimilarBase64(t *testing.T) {
+	is := is.New(t)
+
+	base64Str := "base64Str"
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		is.Equal(r.URL.Path, "/facebox/similar")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		is.Equal(r.FormValue("base64"), base64Str)
+		io.WriteString(w, `{
+			"success": true,
+			"similarCount": 3,
+			"similar": [
+				{
+					"id": "file1.jpg",
+					"name": "Ringo Starr"
+				},
+				{
+					"id": "file2.jpg",
+					"name": "Ringo Starr"
+				},
+				{
+					"id": "file3.jpg",
+					"name": "Ringo Starr"
+				}
+			]
+		}`)
+	}))
+	defer srv.Close()
+
+	fb := facebox.New(srv.URL)
+	similar, err := fb.SimilarBase64(base64Str)
+	is.NoErr(err)
+
+	is.Equal(len(similar), 3)
+
+}

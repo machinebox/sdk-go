@@ -55,6 +55,25 @@ func TestTeachURLError(t *testing.T) {
 	is.Equal(err.Error(), "tagbox: something went wrong")
 }
 
+func TestTeachBase64(t *testing.T) {
+	is := is.New(t)
+	base64Str := "base64Str"
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		is.Equal(r.URL.Path, "/tagbox/teach")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		is.Equal(r.FormValue("base64"), base64Str)
+		is.Equal(r.FormValue("tag"), "monkeys")
+		is.Equal(r.FormValue("id"), "image1.jpg")
+		io.WriteString(w, `{
+			"success": true
+		}`)
+	}))
+	defer srv.Close()
+	fb := tagbox.New(srv.URL)
+	err := fb.TeachBase64(base64Str, "image1.jpg", "monkeys")
+	is.NoErr(err)
+}
+
 func TestTeachImage(t *testing.T) {
 	is := is.New(t)
 

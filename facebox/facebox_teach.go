@@ -95,6 +95,38 @@ func (c *Client) TeachURL(imageURL *url.URL, id, name string) error {
 	return nil
 }
 
+// TeachBase64 teaches facebox the face in the Base64 encoded image.
+// See Teach for more information.
+func (c *Client) TeachBase64(data, id, name string) error {
+	u, err := url.Parse(c.addr + "/facebox/teach")
+	if err != nil {
+		return err
+	}
+	if !u.IsAbs() {
+		return errors.New("box address must be absolute")
+	}
+	form := url.Values{}
+	form.Set("base64", data)
+	form.Set("name", name)
+	form.Set("id", id)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	err = c.parseResponse(resp.Body)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Remove makes facebox to forget a face
 func (c *Client) Remove(id string) error {
 	if id == "" {

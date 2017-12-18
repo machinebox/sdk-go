@@ -126,6 +126,31 @@ func (c *Client) CheckURL(imageURL *url.URL) (float64, error) {
 	return c.parseCheckResponse(resp.Body)
 }
 
+// CheckBase64 gets the nudity probability for the Base64 encoded image.
+func (c *Client) CheckBase64(data string) (float64, error) {
+	u, err := url.Parse(c.addr + "/nudebox/check")
+	if err != nil {
+		return 0, err
+	}
+	if !u.IsAbs() {
+		return 0, errors.New("box address must be absolute")
+	}
+	form := url.Values{}
+	form.Set("base64", data)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return 0, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	return c.parseCheckResponse(resp.Body)
+}
+
 // parseCheckResponse parses the check response data.
 func (c *Client) parseCheckResponse(r io.Reader) (float64, error) {
 	var checkResponse struct {

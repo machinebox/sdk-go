@@ -104,6 +104,31 @@ func (c *Client) SimilarID(id string) ([]Similar, error) {
 	return c.parseSimilarResponse(resp.Body)
 }
 
+// SimilarBase64 checks the Base64 encoded image for similar faces.
+func (c *Client) SimilarBase64(data string) ([]Similar, error) {
+	u, err := url.Parse(c.addr + "/facebox/similar")
+	if err != nil {
+		return nil, err
+	}
+	if !u.IsAbs() {
+		return nil, errors.New("box address must be absolute")
+	}
+	form := url.Values{}
+	form.Set("base64", data)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return c.parseSimilarResponse(resp.Body)
+}
+
 func (c *Client) parseSimilarResponse(r io.Reader) ([]Similar, error) {
 	var similarResponse struct {
 		Success bool

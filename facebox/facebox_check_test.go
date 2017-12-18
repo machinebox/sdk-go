@@ -200,3 +200,47 @@ func TestCheckImageError(t *testing.T) {
 	is.Equal(err.Error(), "facebox: something went wrong")
 
 }
+
+func TestCheckBase64(t *testing.T) {
+	is := is.New(t)
+
+	base64Str := `base64Str`
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		is.Equal(r.URL.Path, "/facebox/check")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		is.Equal(r.FormValue("base64"), base64Str)
+		io.WriteString(w, `{
+				"success": true,
+				"facesCount": 3,
+				"faces": [
+					{
+						"rect": { "top": 0, "left": 0, "width": 120, "height": 120 },
+						"id": "file1.jpg",
+						"name": "John Lennon",
+						"matched": true,
+						"confidence": 0.8
+					},
+					{
+						"rect": { "top": 200, "left": 200, "width": 100, "height": 100 },
+						"id": "file6.jpg",
+						"name": "Ringo Starr",
+						"matched": true,
+						"confidence": 0.7
+					},
+					{
+						"rect": { "top": 50, "left": 50, "width": 100, "height": 100 },
+						"matched": false
+					}
+				]
+			}`)
+	}))
+	defer srv.Close()
+
+	fb := facebox.New(srv.URL)
+	faces, err := fb.CheckBase64(base64Str)
+	is.NoErr(err)
+
+	is.Equal(len(faces), 3)
+
+}
