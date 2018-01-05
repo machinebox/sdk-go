@@ -45,6 +45,9 @@ func (c *Client) Similar(image io.Reader) ([]Similar, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseSimilarResponse(resp.Body)
 }
 
@@ -73,6 +76,9 @@ func (c *Client) SimilarURL(imageURL *url.URL) ([]Similar, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseSimilarResponse(resp.Body)
 }
 
@@ -101,6 +107,9 @@ func (c *Client) SimilarID(id string) ([]Similar, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseSimilarResponse(resp.Body)
 }
 
@@ -126,6 +135,9 @@ func (c *Client) SimilarBase64(data string) ([]Similar, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseSimilarResponse(resp.Body)
 }
 

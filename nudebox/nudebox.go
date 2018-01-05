@@ -57,6 +57,9 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return nil, err
 	}
@@ -95,6 +98,9 @@ func (c *Client) Check(image io.Reader) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return 0, errors.New(resp.Status)
+	}
 	return c.parseCheckResponse(resp.Body)
 }
 
@@ -123,6 +129,9 @@ func (c *Client) CheckURL(imageURL *url.URL) (float64, error) {
 		return 0, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return 0, errors.New(resp.Status)
+	}
 	return c.parseCheckResponse(resp.Body)
 }
 
@@ -148,6 +157,9 @@ func (c *Client) CheckBase64(data string) (float64, error) {
 		return 0, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return 0, errors.New(resp.Status)
+	}
 	return c.parseCheckResponse(resp.Body)
 }
 

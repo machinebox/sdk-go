@@ -40,11 +40,10 @@ func (c *Client) Rename(id, name string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
 	}
-	return nil
+	return c.parseResponse(resp.Body)
 }
 
 // RenameAll changes the name for all the faces that match a given name
@@ -79,9 +78,8 @@ func (c *Client) RenameAll(oldName, newName string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
 	}
-	return nil
+	return c.parseResponse(resp.Body)
 }
