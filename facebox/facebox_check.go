@@ -45,6 +45,9 @@ func (c *Client) Check(image io.Reader) ([]Face, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseCheckResponse(resp.Body)
 }
 
@@ -73,6 +76,9 @@ func (c *Client) CheckURL(imageURL *url.URL) ([]Face, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseCheckResponse(resp.Body)
 }
 
@@ -98,6 +104,9 @@ func (c *Client) CheckBase64(data string) ([]Face, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return c.parseCheckResponse(resp.Body)
 }
 

@@ -108,6 +108,9 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return nil, err
 	}
@@ -139,6 +142,9 @@ func (c *Client) Check(title string, content string, u *url.URL) (*Analysis, err
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	var response struct {
 		Success bool
 		Error   string

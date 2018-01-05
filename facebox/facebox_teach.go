@@ -57,6 +57,9 @@ func (c *Client) Teach(image io.Reader, id, name string) error {
 		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
+	}
 	return c.parseResponse(resp.Body)
 }
 
@@ -88,11 +91,10 @@ func (c *Client) TeachURL(imageURL *url.URL, id, name string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
 	}
-	return nil
+	return c.parseResponse(resp.Body)
 }
 
 // TeachBase64 teaches facebox the face in the Base64 encoded image.
@@ -120,11 +122,10 @@ func (c *Client) TeachBase64(data, id, name string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
 	}
-	return nil
+	return c.parseResponse(resp.Body)
 }
 
 // Remove makes facebox to forget a face
@@ -153,11 +154,10 @@ func (c *Client) Remove(id string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
 	}
-	return nil
+	return c.parseResponse(resp.Body)
 }
 
 func (c *Client) parseResponse(r io.Reader) error {

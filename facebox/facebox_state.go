@@ -29,6 +29,9 @@ func (c *Client) OpenState() (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 	return resp.Body, nil
 }
 
@@ -65,6 +68,9 @@ func (c *Client) PostState(r io.Reader) error {
 		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
+	}
 	return c.parseResponse(resp.Body)
 }
 
@@ -94,9 +100,8 @@ func (c *Client) PostStateURL(stateURL *url.URL) error {
 		return err
 	}
 	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
 	}
-	return nil
+	return c.parseResponse(resp.Body)
 }
