@@ -39,7 +39,6 @@ func TestWaitForReady(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	time.AfterFunc(300*time.Millisecond, cancel)
 	go func() {
-		time.Sleep(200 * time.Millisecond)
 		i.setReady()
 	}()
 	err := WaitForReady(ctx, i)
