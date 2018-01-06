@@ -59,7 +59,6 @@ func TestCheckURL(t *testing.T) {
 	options.NudeboxThreshold(0.2)
 	video, err := vb.CheckURL(imageURL, options)
 	is.NoErr(err)
-
 	is.Equal(video.ID, "5a50b8067eced76bad103c53dd0f5226")
 
 }
