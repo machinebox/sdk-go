@@ -14,6 +14,7 @@ import (
 type Video struct {
 	ID                          string      `json:"id"`
 	Status                      VideoStatus `json:"status"`
+	Error                       string      `json:"error"`
 	DownloadTotal               int64       `json:"downloadTotal,omitempty"`
 	DownloadComplete            int64       `json:"downloadComplete,omitempty"`
 	DownloadEstimatedCompletion *time.Time  `json:"downloadCompleteEstimate,omitempty"`
