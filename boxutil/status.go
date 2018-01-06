@@ -2,13 +2,8 @@ package boxutil
 
 import (
 	"context"
-	"errors"
 	"time"
 )
-
-// ErrCanceled is returned when the context cancels or times out
-// an operation.
-var ErrCanceled = errors.New("context is done")
 
 // readyCheckInterval is the interval to wait between checking
 // the status in StatusChan.
@@ -51,7 +46,7 @@ func WaitForReady(ctx context.Context, i Box) error {
 	for {
 		select {
 		case <-ctx.Done():
-			return ErrCanceled
+			return ctx.Err()
 		case status := <-statusChan:
 			if IsReady(status) {
 				return nil

@@ -55,7 +55,7 @@ func TestWaitForReadyTimeout(t *testing.T) {
 		i.setReady()
 	}()
 	err := WaitForReady(ctx, i)
-	is.Equal(err, ErrCanceled)
+	is.Equal(err, context.Canceled)
 }
 
 type testBox struct {
