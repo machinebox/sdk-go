@@ -1,2 +1,2 @@
-// Package boxutil provides some helpful utilities for consuming Machine Box services.
+// Package boxutil is DEPCREATED. Use github.com/machinebox/sdk-go/boxutil instead.
 package boxutil
