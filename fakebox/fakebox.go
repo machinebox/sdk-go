@@ -1,4 +1,4 @@
-// Package fakebox provides a client for accessing fakebox services.
+// Package fakebox provides a client for accessing Fakebox services.
 package fakebox
 
 import (

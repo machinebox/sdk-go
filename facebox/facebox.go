@@ -1,4 +1,4 @@
-// Package facebox provides a client for accessing facebox services.
+// Package facebox provides a client for accessing Facebox services.
 package facebox
 
 import (

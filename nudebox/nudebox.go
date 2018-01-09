@@ -1,4 +1,4 @@
-// Package nudebox provides a client for accessing nudebox services.
+// Package nudebox provides a client for accessing Nudebox services.
 package nudebox
 
 import (
