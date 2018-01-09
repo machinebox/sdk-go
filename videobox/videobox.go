@@ -1,3 +1,4 @@
+// Package videobox provides a client for accessing Videobox services.
 package videobox
 
 import (

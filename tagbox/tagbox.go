@@ -1,4 +1,4 @@
-// Package tagbox provides a client for accessing tagbox services.
+// Package tagbox provides a client for accessing Tagbox services.
 package tagbox
 
 import (
