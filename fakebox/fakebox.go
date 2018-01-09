@@ -157,7 +157,7 @@ func (c *Client) Check(title string, content string, u *url.URL) (*Analysis, err
 		return nil, errors.Wrap(err, "decoding response")
 	}
 	if !response.Success {
-		return nil, ErrNewsbox(response.Error)
+		return nil, ErrFakebox(response.Error)
 	}
 	return &Analysis{
 		Title:   response.Title,
@@ -166,9 +166,9 @@ func (c *Client) Check(title string, content string, u *url.URL) (*Analysis, err
 	}, nil
 }
 
-// ErrNewsbox represents an error from fakebox.
-type ErrNewsbox string
+// ErrFakebox represents an error from Fakebox.
+type ErrFakebox string
 
-func (e ErrNewsbox) Error() string {
+func (e ErrFakebox) Error() string {
 	return "fakebox: " + string(e)
 }

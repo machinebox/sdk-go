@@ -77,7 +77,7 @@ type CheckResponse struct {
 	CustomTags []Tag `json:"custom_tags"`
 }
 
-// ErrTagbox represents an error from tagbox.
+// ErrTagbox represents an error from Tagbox.
 type ErrTagbox string
 
 func (e ErrTagbox) Error() string {

@@ -179,7 +179,7 @@ func (c *Client) parseCheckResponse(r io.Reader) (float64, error) {
 	return checkResponse.Nude, nil
 }
 
-// ErrNudebox represents an error from nudebox.
+// ErrNudebox represents an error from Nudebox.
 type ErrNudebox string
 
 func (e ErrNudebox) Error() string {

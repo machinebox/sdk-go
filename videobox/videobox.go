@@ -74,7 +74,7 @@ func (c *Client) Info() (*boxutil.Info, error) {
 	return &info, nil
 }
 
-// ErrVideobox represents an error from facebox.
+// ErrVideobox represents an error from Videobox.
 type ErrVideobox string
 
 func (e ErrVideobox) Error() string {
