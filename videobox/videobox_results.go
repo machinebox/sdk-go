@@ -61,6 +61,9 @@ type Range struct {
 	StartMS int `json:"start_ms"`
 	// EndMS is the end time in milliseconds.
 	EndMS int `json:"end_ms"`
+	// Confidence is the maximum confidence of any instance in this
+	// range.
+	Confidence float64 `json:"confidence,omitempty"`
 }
 
 // Results gets the results of a video processing operation.
