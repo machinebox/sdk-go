@@ -23,20 +23,17 @@ func TestResults(t *testing.T) {
 	vb := videobox.New(srv.URL)
 	results, err := vb.Results("5a50b8067eced76bad103c53dd0f5226")
 	is.NoErr(err)
-	is.Equal(results.Facebox.FacesCount, 1)               // results.Facebox.FacesCount
-	is.Equal(results.Tagbox.TagsCount, 3)                 // results.Tagbox.TagsCount
-	is.Equal(len(results.Nudebox.Nudity[0].Instances), 5) // results.Nudebox.Nudity[0].InstancesCount
+	is.Equal(len(results.Facebox.Faces), 1) // results.Facebox.FacesCount
+	is.Equal(len(results.Tagbox.Tags), 3)   // results.Tagbox.TagsCount
 }
 
 const resultsPayload = `{
 	"success": true,
 	"ready": true,
 	"facebox": {
-		"facesCount": 1,
 		"faces": [
 			{
 				"key": "Unknown faces",
-				"instancesCount": 3,
 				"instances": [
 					{
 						"start": 24,
@@ -62,11 +59,9 @@ const resultsPayload = `{
 		"errorsCount": 0
 	},
 	"tagbox": {
-		"tagsCount": 3,
 		"tags": [
 			{
 				"key": "candle",
-				"instancesCount": 3,
 				"instances": [
 					{
 						"start": 168,
@@ -90,7 +85,6 @@ const resultsPayload = `{
 			},
 			{
 				"key": "crutch",
-				"instancesCount": 1,
 				"instances": [
 					{
 						"start": 504,
@@ -102,7 +96,6 @@ const resultsPayload = `{
 			},
 			{
 				"key": "miniskirt",
-				"instancesCount": 1,
 				"instances": [
 					{
 						"start": 72,
@@ -119,7 +112,6 @@ const resultsPayload = `{
 		"nudity": [
 			{
 				"key": "greater than 0.5 chance of nuditiy",
-				"instancesCount": 5,
 				"instances": [
 					{
 						"start": 264,
