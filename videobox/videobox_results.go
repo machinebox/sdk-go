@@ -19,8 +19,6 @@ type VideoAnalysis struct {
 
 // Facebox holds box specific results.
 type Facebox struct {
-	// FacesCount holds the total number of faces found.
-	FacesCount int    `json:"facesCount"`
 	Faces      []Item `json:"faces"`
 	ErrorCount int    `json:"errorsCount"`
 	LastErr    string `json:"lastError,omitempty"`
@@ -28,8 +26,6 @@ type Facebox struct {
 
 // Tagbox holds box specific results.
 type Tagbox struct {
-	// TagsCount holds the total number of tags detected.
-	TagsCount  int    `json:"tagsCount"`
 	Tags       []Item `json:"tags"`
 	ErrorCount int    `json:"errorsCount"`
 	LastErr    string `json:"lastError,omitempty"`
