@@ -19,7 +19,7 @@ type Video struct {
 	DownloadTotal               int64       `json:"downloadTotal,omitempty"`
 	DownloadComplete            int64       `json:"downloadComplete,omitempty"`
 	DownloadEstimatedCompletion *time.Time  `json:"downloadCompleteEstimate,omitempty"`
-	TotalFrames                 int         `json:"framesCount,omitempty"`
+	FramesCount                 int         `json:"framesCount,omitempty"`
 	FramesComplete              int         `json:"framesComplete"`
 	LastFrameBase64             string      `json:"lastFrameBase64,omitempty"`
 	MillisecondsComplete        int         `json:"millisecondsComplete"`
