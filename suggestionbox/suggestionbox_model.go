@@ -18,7 +18,7 @@ type Model struct {
 	// ID is the ID of the model.
 	ID string `json:"id,omitempty"`
 	// Name is the human readable name of the Model.
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Options are optional Model settings to adjust the behaviour
 	// of this Model within Suggestionbox.
 	Options *ModelOptions `json:"options,omitempty"`
@@ -39,18 +39,18 @@ func NewModel(id, name string, choices ...Choice) Model {
 // for example age:28 or location:"London".
 type Feature struct {
 	// Key is the name of the Feature.
-	Key string `json:"key,omitempty"`
+	Key string `json:"key"`
 	// Value is the string value of this Feature.
-	Value string `json:"value,omitempty"`
+	Value string `json:"value"`
 	// Type is the type of the Feature.
 	// Can be "number", "text", "keyword", "list", "image_url" or "image_base64"..
-	Type string `json:"type,omitempty"`
+	Type string `json:"type"`
 }
 
 // Choice is an option with features.
 type Choice struct {
 	// ID is a unique ID for this choice.
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Features holds all the Feature objects that describe
 	// this choice.
 	Features []Feature `json:"features,omitempty"`
