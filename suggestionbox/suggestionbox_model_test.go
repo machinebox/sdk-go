@@ -37,22 +37,24 @@ func TestCreateModel(t *testing.T) {
 	inModel := suggestionbox.Model{
 		Name: "My Model",
 		Choices: []suggestionbox.Choice{
-			{
-				ID: "choice1",
-				Features: []suggestionbox.Feature{
-					{
-						Key:   "title",
-						Type:  "text",
-						Value: "Machine Box releases new product",
-					},
-				},
-			},
+			suggestionbox.NewChoice("choice1", suggestionbox.FeatureText("title", "Machine Box releases new product")),
 		},
 	}
 	outModel, err := sb.CreateModel(context.Background(), inModel)
 	is.NoErr(err)
 	is.Equal(apiCalls, 1)      // apiCalls
 	is.Equal(outModel.ID, "1") // outModel.ID
+}
+
+func TestNewChoice(t *testing.T) {
+	is := is.New(t)
+
+	c := suggestionbox.NewChoice("choice1",
+		suggestionbox.FeatureKeyword("city", "New York City"),
+	)
+	is.Equal(c.ID, "choice1")
+	is.Equal(len(c.Features), 1)
+	is.Equal(c.Features[0].Key, "city")
 }
 
 func TestFeatureHelpers(t *testing.T) {

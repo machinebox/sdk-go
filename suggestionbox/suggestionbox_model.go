@@ -163,3 +163,11 @@ func FeatureImageBase64(key string, data string) Feature {
 		Value: data,
 	}
 }
+
+// NewChoice creates a new Choice.
+func NewChoice(id string, features ...Feature) Choice {
+	return Choice{
+		ID:       id,
+		Features: features,
+	}
+}
