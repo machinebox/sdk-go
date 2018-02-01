@@ -26,6 +26,15 @@ type Model struct {
 	Choices []Choice `json:"choices,omitempty"`
 }
 
+// NewModel makes a new Model.
+func NewModel(id, name string, choices ...Choice) Model {
+	return Model{
+		ID:      id,
+		Name:    name,
+		Choices: choices,
+	}
+}
+
 // Feature represents a single feature, to describe an input or a choice
 // for example age:28 or location:"London".
 type Feature struct {
@@ -45,6 +54,14 @@ type Choice struct {
 	// Features holds all the Feature objects that describe
 	// this choice.
 	Features []Feature `json:"features,omitempty"`
+}
+
+// NewChoice creates a new Choice.
+func NewChoice(id string, features ...Feature) Choice {
+	return Choice{
+		ID:       id,
+		Features: features,
+	}
 }
 
 // ModelOptions describes the behaviours of a Model.
@@ -161,22 +178,5 @@ func FeatureImageBase64(key string, data string) Feature {
 		Type:  "image_base64",
 		Key:   key,
 		Value: data,
-	}
-}
-
-// NewChoice creates a new Choice.
-func NewChoice(id string, features ...Feature) Choice {
-	return Choice{
-		ID:       id,
-		Features: features,
-	}
-}
-
-// NewModel makes a new Model.
-func NewModel(id, name string, choices ...Choice) Model {
-	return Model{
-		ID:      id,
-		Name:    name,
-		Choices: choices,
 	}
 }
