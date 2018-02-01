@@ -27,14 +27,20 @@ type Model struct {
 // Feature represents a single feature, to describe an input or a choice
 // for example age:28 or location:"London".
 type Feature struct {
-	Key   string `json:"key,omitempty"`
+	// Key is the name of the Feature.
+	Key string `json:"key,omitempty"`
+	// Value is the string value of this Feature.
 	Value string `json:"value,omitempty"`
-	Type  string `json:"type,omitempty"`
+	// Type is the type of the Feature.
+	Type string `json:"type,omitempty"`
 }
 
 // Choice is an option with features.
 type Choice struct {
-	ID       string    `json:"id,omitempty"`
+	// ID is a unique ID for this choice.
+	ID string `json:"id,omitempty"`
+	// Features holds all the Feature objects that describe
+	// this choice.
 	Features []Feature `json:"features,omitempty"`
 }
 
