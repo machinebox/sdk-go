@@ -13,8 +13,11 @@ import (
 
 // Reward is used to inform Suggestionbox of a successful prediction.
 type Reward struct {
-	RewardID string  `json:"reward_id"`
-	Value    float64 `json:"value,omitempty"`
+	// RewardID is the ID of the reward being reported.
+	RewardID string `json:"reward_id"`
+	// Value is the weight of the reward.
+	// Usually 1.
+	Value float64 `json:"value,omitempty"`
 }
 
 // Reward tells Suggestionbox about a successful prediction.

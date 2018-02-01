@@ -1,3 +1,4 @@
+// Package suggestionbox provides a client for accessing Suggestionbox services.
 package suggestionbox
 
 import (

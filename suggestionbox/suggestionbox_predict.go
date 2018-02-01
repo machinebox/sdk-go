@@ -13,19 +13,27 @@ import (
 
 // Prediction is a predicted choice.
 type Prediction struct {
-	ID       string  `json:"id,omitempty"`
-	RewardID string  `json:"reward_id,omitempty"`
-	Score    float64 `json:"score,omitempty"`
+	// ID is the choice identifier being predicted.
+	ID string `json:"id,omitempty"`
+	// RewardID is the ID of the reward that should be sent if this
+	// prediction was successful.
+	RewardID string `json:"reward_id,omitempty"`
+	// Score is a numerical value indicating how this prediction relates
+	// to other predictions.
+	Score float64 `json:"score,omitempty"`
 }
 
 // PredictRequest contains information about the prediction that Suggestionbox
 // will make.
 type PredictRequest struct {
+	// Inputs is a list of Feature objects that will be used when
+	// making the prediction.
 	Inputs []Feature `json:"inputs,omitempty"`
 }
 
 // PredictResponse contains prediction choices.
 type PredictResponse struct {
+	// Choices contains the predictions.
 	Choices []Prediction `json:"choices,omitempty"`
 }
 
