@@ -34,16 +34,29 @@ func TestCreateModel(t *testing.T) {
 	}))
 	defer srv.Close()
 	sb := suggestionbox.New(srv.URL)
-	inModel := suggestionbox.Model{
-		Name: "My Model",
-		Choices: []suggestionbox.Choice{
-			suggestionbox.NewChoice("choice1", suggestionbox.FeatureText("title", "Machine Box releases new product")),
-		},
-	}
+	inModel := suggestionbox.NewModel("", "My Model",
+		suggestionbox.NewChoice("choice1",
+			suggestionbox.FeatureText("title", "Machine Box releases new product"),
+		),
+	)
 	outModel, err := sb.CreateModel(context.Background(), inModel)
 	is.NoErr(err)
 	is.Equal(apiCalls, 1)      // apiCalls
 	is.Equal(outModel.ID, "1") // outModel.ID
+}
+
+func TestNewModel(t *testing.T) {
+	is := is.New(t)
+
+	m := suggestionbox.NewModel("model1", "My Model",
+		suggestionbox.NewChoice("choice1",
+			suggestionbox.FeatureKeyword("city", "New York City"),
+		),
+	)
+	is.Equal(m.ID, "model1")
+	is.Equal(m.Name, "My Model")
+	is.Equal(len(m.Choices), 1)
+	is.Equal(m.Choices[0].ID, "choice1")
 }
 
 func TestNewChoice(t *testing.T) {

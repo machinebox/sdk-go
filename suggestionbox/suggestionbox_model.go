@@ -171,3 +171,12 @@ func NewChoice(id string, features ...Feature) Choice {
 		Features: features,
 	}
 }
+
+// NewModel makes a new Model.
+func NewModel(id, name string, choices ...Choice) Model {
+	return Model{
+		ID:      id,
+		Name:    name,
+		Choices: choices,
+	}
+}
