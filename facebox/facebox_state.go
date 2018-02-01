@@ -24,7 +24,6 @@ func (c *Client) OpenState() (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Accept", "application/json; charset=utf-8")
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
