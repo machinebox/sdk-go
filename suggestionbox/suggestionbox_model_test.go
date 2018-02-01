@@ -54,3 +54,40 @@ func TestCreateModel(t *testing.T) {
 	is.Equal(apiCalls, 1)      // apiCalls
 	is.Equal(outModel.ID, "1") // outModel.ID
 }
+
+func TestFeatureHelpers(t *testing.T) {
+	is := is.New(t)
+
+	var f suggestionbox.Feature
+
+	f = suggestionbox.FeatureNumber("age", 20)
+	is.Equal(f.Type, "number")
+	is.Equal(f.Key, "age")
+	is.Equal(f.Value, "20")
+
+	f = suggestionbox.FeatureText("title", "Machine box releases new box")
+	is.Equal(f.Type, "text")
+	is.Equal(f.Key, "title")
+	is.Equal(f.Value, "Machine box releases new box")
+
+	f = suggestionbox.FeatureKeyword("city", "New York City")
+	is.Equal(f.Type, "keyword")
+	is.Equal(f.Key, "city")
+	is.Equal(f.Value, "New York City")
+
+	f = suggestionbox.FeatureList("categories", "one", "two", "three")
+	is.Equal(f.Type, "list")
+	is.Equal(f.Key, "categories")
+	is.Equal(f.Value, "one,two,three")
+
+	f = suggestionbox.FeatureImageURL("pic", "http://url.com/path/to/pic.jpg")
+	is.Equal(f.Type, "image_url")
+	is.Equal(f.Key, "pic")
+	is.Equal(f.Value, "http://url.com/path/to/pic.jpg")
+
+	f = suggestionbox.FeatureImageBase64("pic", "pretendthisisimagedata")
+	is.Equal(f.Type, "image_base64")
+	is.Equal(f.Key, "pic")
+	is.Equal(f.Value, "pretendthisisimagedata")
+
+}

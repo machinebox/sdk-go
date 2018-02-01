@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -103,4 +105,61 @@ func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
 		return model, ErrSuggestionbox(response.Error)
 	}
 	return response.Model, nil
+}
+
+// FeatureNumber makes a numerical Feature.
+func FeatureNumber(key string, value float64) Feature {
+	return Feature{
+		Type:  "number",
+		Key:   key,
+		Value: fmt.Sprintf("%v", value),
+	}
+}
+
+// FeatureText makes a textual Feature that will be tokenized.
+// Use FeatureKeyword for values that should not be tokenized.
+func FeatureText(key string, text string) Feature {
+	return Feature{
+		Type:  "text",
+		Key:   key,
+		Value: text,
+	}
+}
+
+// FeatureKeyword makes a textual Feature that will not be tokenized.
+// Use FeatureList to provide multiple keywords in a single Feature.
+// Use Text for bodies of text that should be tokenized.
+func FeatureKeyword(key string, keyword string) Feature {
+	return Feature{
+		Type:  "keyword",
+		Key:   key,
+		Value: keyword,
+	}
+}
+
+// FeatureList makes a Feature made up of multiple keywords.
+func FeatureList(key string, keywords ...string) Feature {
+	return Feature{
+		Type:  "list",
+		Key:   key,
+		Value: strings.Join(keywords, ","),
+	}
+}
+
+// FeatureImageURL makes a Feature that points to a hosted image.
+func FeatureImageURL(key string, url string) Feature {
+	return Feature{
+		Type:  "image_url",
+		Key:   key,
+		Value: url,
+	}
+}
+
+// FeatureImageBase64 makes a Feature that is base 64 encoded.
+func FeatureImageBase64(key string, data string) Feature {
+	return Feature{
+		Type:  "image_base64",
+		Key:   key,
+		Value: data,
+	}
 }
