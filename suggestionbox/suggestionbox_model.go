@@ -32,6 +32,7 @@ type Feature struct {
 	// Value is the string value of this Feature.
 	Value string `json:"value,omitempty"`
 	// Type is the type of the Feature.
+	// Can be "number", "text", "keyword", "list", "image_url" or "image_base64"..
 	Type string `json:"type,omitempty"`
 }
 
