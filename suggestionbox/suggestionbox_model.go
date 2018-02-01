@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -16,7 +18,7 @@ type Model struct {
 	// ID is the ID of the model.
 	ID string `json:"id,omitempty"`
 	// Name is the human readable name of the Model.
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Options are optional Model settings to adjust the behaviour
 	// of this Model within Suggestionbox.
 	Options *ModelOptions `json:"options,omitempty"`
@@ -24,25 +26,42 @@ type Model struct {
 	Choices []Choice `json:"choices,omitempty"`
 }
 
+// NewModel makes a new Model.
+func NewModel(id, name string, choices ...Choice) Model {
+	return Model{
+		ID:      id,
+		Name:    name,
+		Choices: choices,
+	}
+}
+
 // Feature represents a single feature, to describe an input or a choice
 // for example age:28 or location:"London".
 type Feature struct {
 	// Key is the name of the Feature.
-	Key string `json:"key,omitempty"`
+	Key string `json:"key"`
 	// Value is the string value of this Feature.
-	Value string `json:"value,omitempty"`
+	Value string `json:"value"`
 	// Type is the type of the Feature.
 	// Can be "number", "text", "keyword", "list", "image_url" or "image_base64"..
-	Type string `json:"type,omitempty"`
+	Type string `json:"type"`
 }
 
 // Choice is an option with features.
 type Choice struct {
 	// ID is a unique ID for this choice.
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 	// Features holds all the Feature objects that describe
 	// this choice.
 	Features []Feature `json:"features,omitempty"`
+}
+
+// NewChoice creates a new Choice.
+func NewChoice(id string, features ...Feature) Choice {
+	return Choice{
+		ID:       id,
+		Features: features,
+	}
 }
 
 // ModelOptions describes the behaviours of a Model.
@@ -103,4 +122,61 @@ func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
 		return model, ErrSuggestionbox(response.Error)
 	}
 	return response.Model, nil
+}
+
+// FeatureNumber makes a numerical Feature.
+func FeatureNumber(key string, value float64) Feature {
+	return Feature{
+		Type:  "number",
+		Key:   key,
+		Value: fmt.Sprintf("%v", value),
+	}
+}
+
+// FeatureText makes a textual Feature that will be tokenized.
+// Use FeatureKeyword for values that should not be tokenized.
+func FeatureText(key string, text string) Feature {
+	return Feature{
+		Type:  "text",
+		Key:   key,
+		Value: text,
+	}
+}
+
+// FeatureKeyword makes a textual Feature that will not be tokenized.
+// Use FeatureList to provide multiple keywords in a single Feature.
+// Use Text for bodies of text that should be tokenized.
+func FeatureKeyword(key string, keyword string) Feature {
+	return Feature{
+		Type:  "keyword",
+		Key:   key,
+		Value: keyword,
+	}
+}
+
+// FeatureList makes a Feature made up of multiple keywords.
+func FeatureList(key string, keywords ...string) Feature {
+	return Feature{
+		Type:  "list",
+		Key:   key,
+		Value: strings.Join(keywords, ","),
+	}
+}
+
+// FeatureImageURL makes a Feature that points to a hosted image.
+func FeatureImageURL(key string, url string) Feature {
+	return Feature{
+		Type:  "image_url",
+		Key:   key,
+		Value: url,
+	}
+}
+
+// FeatureImageBase64 makes a Feature that is base 64 encoded.
+func FeatureImageBase64(key string, data string) Feature {
+	return Feature{
+		Type:  "image_base64",
+		Key:   key,
+		Value: data,
+	}
 }
