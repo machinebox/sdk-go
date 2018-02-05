@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 	"strings"
-	"time"
 
 	"github.com/pkg/errors"
 )
@@ -66,8 +66,8 @@ func NewChoice(id string, features ...Feature) Choice {
 
 // ModelOptions describes the behaviours of a Model.
 type ModelOptions struct {
-	// Expiration is the time to wait for the reward before it expires.
-	Expiration time.Duration `json:"expiration,omitempty"`
+	// ExpirationSeconds is the number of seconds to wait for the reward before it expires.
+	ExpirationSeconds int `json:"expiration_seconds,omitempty"`
 
 	// Epsilon enables proportionate exploiting vs exploring ratio.
 	Epsilon float64 `json:"epsilon,omitempty"`
@@ -79,6 +79,83 @@ type ModelOptions struct {
 	Ngrams int `json:"ngrams,omitempty"`
 	// Skipgrams describes the skip-grams for the text analysis.
 	Skipgrams int `json:"skipgrams,omitempty"`
+}
+
+// GetModel gets a Model by its ID.
+func (c *Client) GetModel(ctx context.Context, modelID string) (Model, error) {
+	var model Model
+	u, err := url.Parse(c.addr + "/" + path.Join("suggestionbox", "models", modelID))
+	if err != nil {
+		return model, err
+	}
+	if !u.IsAbs() {
+		return model, errors.New("box address must be absolute")
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return model, err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return model, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return model, errors.New(resp.Status)
+	}
+	var response struct {
+		Success bool
+		Error   string
+		Model
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return model, errors.Wrap(err, "decoding response")
+	}
+	if !response.Success {
+		return model, ErrSuggestionbox(response.Error)
+	}
+	return response.Model, nil
+}
+
+// DeleteModel gets a Model by its ID.
+func (c *Client) DeleteModel(ctx context.Context, modelID string) error {
+	u, err := url.Parse(c.addr + "/" + path.Join("suggestionbox", "models", modelID))
+	if err != nil {
+		return err
+	}
+	if !u.IsAbs() {
+		return errors.New("box address must be absolute")
+	}
+	req, err := http.NewRequest(http.MethodDelete, u.String(), nil)
+	if err != nil {
+		return err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
+	}
+	var response struct {
+		Success bool
+		Error   string
+		Model
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return errors.Wrap(err, "decoding response")
+	}
+	if !response.Success {
+		return ErrSuggestionbox(response.Error)
+	}
+	return nil
 }
 
 // CreateModel creates the Model in Suggestionbox.
