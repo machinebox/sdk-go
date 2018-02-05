@@ -93,7 +93,7 @@ func TestListModels(t *testing.T) {
 	}))
 	defer srv.Close()
 	sb := suggestionbox.New(srv.URL)
-	models, err := sb.ListModels(context.Background(), "model1")
+	models, err := sb.ListModels(context.Background())
 	is.NoErr(err)
 	is.Equal(apiCalls, 1)    // apiCalls
 	is.Equal(len(models), 3) // len(models)

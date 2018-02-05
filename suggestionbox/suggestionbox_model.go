@@ -82,7 +82,7 @@ type ModelOptions struct {
 }
 
 // ListModels gets a Model by its ID.
-func (c *Client) ListModels(ctx context.Context, modelID string) ([]Model, error) {
+func (c *Client) ListModels(ctx context.Context) ([]Model, error) {
 	u, err := url.Parse(c.addr + "/suggestionbox/models")
 	if err != nil {
 		return nil, err
