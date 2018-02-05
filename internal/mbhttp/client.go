@@ -1,3 +1,4 @@
+// Package mbhttp provides helpers common across all SDKs.
 package mbhttp
 
 import (
