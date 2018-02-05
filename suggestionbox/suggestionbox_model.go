@@ -82,6 +82,49 @@ type ModelOptions struct {
 	Skipgrams int `json:"skipgrams,omitempty"`
 }
 
+// CreateModel creates the Model in Suggestionbox.
+// If no ID is set, one will be assigned in the return Model.
+func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
+	u, err := url.Parse(c.addr + "/suggestionbox/models")
+	if err != nil {
+		return model, err
+	}
+	if !u.IsAbs() {
+		return model, errors.New("box address must be absolute")
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(model); err != nil {
+		return model, errors.Wrap(err, "encoding request body")
+	}
+	req, err := http.NewRequest(http.MethodPost, u.String(), &buf)
+	if err != nil {
+		return model, err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return model, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return model, errors.New(resp.Status)
+	}
+	var response struct {
+		Success bool
+		Error   string
+		Model
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return model, errors.Wrap(err, "decoding response")
+	}
+	if !response.Success {
+		return model, ErrSuggestionbox(response.Error)
+	}
+	return response.Model, nil
+}
+
 // ListModels gets a Model by its ID.
 func (c *Client) ListModels(ctx context.Context) ([]Model, error) {
 	u, err := url.Parse(c.addr + "/suggestionbox/models")
@@ -194,49 +237,6 @@ func (c *Client) DeleteModel(ctx context.Context, modelID string) error {
 	return nil
 }
 
-// CreateModel creates the Model in Suggestionbox.
-// If no ID is set, one will be assigned in the return Model.
-func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
-	u, err := url.Parse(c.addr + "/suggestionbox/models")
-	if err != nil {
-		return model, err
-	}
-	if !u.IsAbs() {
-		return model, errors.New("box address must be absolute")
-	}
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(model); err != nil {
-		return model, errors.Wrap(err, "encoding request body")
-	}
-	req, err := http.NewRequest(http.MethodPost, u.String(), &buf)
-	if err != nil {
-		return model, err
-	}
-	req = req.WithContext(ctx)
-	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return model, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return model, errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-		Model
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return model, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return model, ErrSuggestionbox(response.Error)
-	}
-	return response.Model, nil
-}
-
 // FeatureNumber makes a numerical Feature.
 func FeatureNumber(key string, value float64) Feature {
 	return Feature{
@@ -292,4 +292,59 @@ func FeatureImageBase64(key string, data string) Feature {
 		Key:   key,
 		Value: data,
 	}
+}
+
+// ModelStats are the statistics for a Model.
+type ModelStats struct {
+	// Predictions is the number of predictions this model has made.
+	Predictions int `json:"predictions"`
+	// Rewards is the number of rewards the model has received.
+	Rewards int `json:"rewards"`
+	// RewardRatio is the ratio between Predictions and Rewards.
+	RewardRatio float64 `json:"reward_ratio"`
+	// Explores is the number of times the model has explored,
+	// to learn new things.
+	Explores int `json:"explores"`
+	// Exploits is the number of times the model has exploited learning.
+	Exploits int `json:"exploits"`
+	// ExploreRatio is the ratio between exploring and exploiting.
+	ExploreRatio float64 `json:"explore_ratio"`
+}
+
+// GetModelStats gets the statistics for the specified model.
+func (c *Client) GetModelStats(ctx context.Context, modelID string) (ModelStats, error) {
+	var stats ModelStats
+	u, err := url.Parse(c.addr + "/" + path.Join("suggestionbox", "models", modelID, "stats"))
+	if err != nil {
+		return stats, err
+	}
+	if !u.IsAbs() {
+		return stats, errors.New("box address must be absolute")
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return stats, err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return stats, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return stats, errors.New(resp.Status)
+	}
+	var response struct {
+		Success bool
+		Error   string
+		ModelStats
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return stats, errors.Wrap(err, "decoding response")
+	}
+	if !response.Success {
+		return stats, ErrSuggestionbox(response.Error)
+	}
+	return response.ModelStats, nil
 }

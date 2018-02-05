@@ -180,3 +180,40 @@ func TestFeatureHelpers(t *testing.T) {
 	is.Equal(f.Value, "pretendthisisimagedata")
 
 }
+
+func TestGetModelStats(t *testing.T) {
+	is := is.New(t)
+	var apiCalls int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		apiCalls++
+		is.Equal(r.Method, http.MethodGet)
+		is.Equal(r.URL.Path, "/suggestionbox/models/model1/stats")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		stats := suggestionbox.ModelStats{
+			Predictions:  1,
+			Rewards:      2,
+			RewardRatio:  3.3,
+			Explores:     4,
+			Exploits:     5,
+			ExploreRatio: 6.6,
+		}
+		is.NoErr(json.NewEncoder(w).Encode(struct {
+			suggestionbox.ModelStats
+			Success bool `json:"success"`
+		}{
+			Success:    true,
+			ModelStats: stats,
+		}))
+	}))
+	defer srv.Close()
+	sb := suggestionbox.New(srv.URL)
+	stats, err := sb.GetModelStats(context.Background(), "model1")
+	is.NoErr(err)
+	is.Equal(apiCalls, 1) // apiCalls
+	is.Equal(stats.Predictions, 1)
+	is.Equal(stats.Rewards, 2)
+	is.Equal(stats.RewardRatio, 3.3)
+	is.Equal(stats.Explores, 4)
+	is.Equal(stats.Exploits, 5)
+	is.Equal(stats.ExploreRatio, 6.6)
+}
