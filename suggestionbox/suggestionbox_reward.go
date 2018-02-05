@@ -40,23 +40,9 @@ func (c *Client) Reward(ctx context.Context, modelID string, reward Reward) erro
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = c.client.Do(req, nil)
 	if err != nil {
 		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return ErrSuggestionbox(response.Error)
 	}
 	return nil
 }
