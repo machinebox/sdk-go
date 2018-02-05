@@ -72,6 +72,33 @@ func TestGetModel(t *testing.T) {
 	is.Equal(outModel.ID, "model1") // outModel.ID
 }
 
+func TestListModels(t *testing.T) {
+	is := is.New(t)
+	var apiCalls int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		apiCalls++
+		is.Equal(r.Method, http.MethodGet)
+		is.Equal(r.URL.Path, "/suggestionbox/models")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		model := suggestionbox.Model{
+			ID: "model1",
+		}
+		is.NoErr(json.NewEncoder(w).Encode(struct {
+			Success bool `json:"success"`
+			Models  []suggestionbox.Model
+		}{
+			Success: true,
+			Models:  []suggestionbox.Model{model, model, model},
+		}))
+	}))
+	defer srv.Close()
+	sb := suggestionbox.New(srv.URL)
+	models, err := sb.ListModels(context.Background(), "model1")
+	is.NoErr(err)
+	is.Equal(apiCalls, 1)    // apiCalls
+	is.Equal(len(models), 3) // len(models)
+}
+
 func TestDeleteModel(t *testing.T) {
 	is := is.New(t)
 	var apiCalls int

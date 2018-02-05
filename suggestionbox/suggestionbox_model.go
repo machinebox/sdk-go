@@ -81,6 +81,44 @@ type ModelOptions struct {
 	Skipgrams int `json:"skipgrams,omitempty"`
 }
 
+// ListModels gets a Model by its ID.
+func (c *Client) ListModels(ctx context.Context, modelID string) ([]Model, error) {
+	u, err := url.Parse(c.addr + "/suggestionbox/models")
+	if err != nil {
+		return nil, err
+	}
+	if !u.IsAbs() {
+		return nil, errors.New("box address must be absolute")
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
+	var response struct {
+		Success bool
+		Error   string
+		Models  []Model
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return nil, errors.Wrap(err, "decoding response")
+	}
+	if !response.Success {
+		return nil, ErrSuggestionbox(response.Error)
+	}
+	return response.Models, nil
+}
+
 // GetModel gets a Model by its ID.
 func (c *Client) GetModel(ctx context.Context, modelID string) (Model, error) {
 	var model Model
