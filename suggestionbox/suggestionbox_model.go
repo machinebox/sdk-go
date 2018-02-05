@@ -96,7 +96,6 @@ func (c *Client) ListModels(ctx context.Context) ([]Model, error) {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -135,7 +134,6 @@ func (c *Client) GetModel(ctx context.Context, modelID string) (Model, error) {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return model, err
@@ -173,7 +171,6 @@ func (c *Client) DeleteModel(ctx context.Context, modelID string) error {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
