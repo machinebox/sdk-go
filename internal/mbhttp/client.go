@@ -10,7 +10,10 @@ import (
 
 // Client makes requests and handles common Machine Box error cases.
 type Client struct {
-	boxname    string
+	boxname string
+
+	// HTTPClient is the underlying http.Client that will be
+	// used to make requests.
 	HTTPClient *http.Client
 }
 
