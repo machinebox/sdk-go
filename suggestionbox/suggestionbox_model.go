@@ -66,8 +66,8 @@ func NewChoice(id string, features ...Feature) Choice {
 
 // ModelOptions describes the behaviours of a Model.
 type ModelOptions struct {
-	// ExpirationSeconds is the number of seconds to wait for the reward before it expires.
-	ExpirationSeconds int `json:"expiration_seconds,omitempty"`
+	// RewardExpirationSeconds is the number of seconds to wait for the reward before it expires.
+	RewardExpirationSeconds int `json:"reward_expiration_seconds,omitempty"`
 
 	// Epsilon enables proportionate exploiting vs exploring ratio.
 	Epsilon float64 `json:"epsilon,omitempty"`
