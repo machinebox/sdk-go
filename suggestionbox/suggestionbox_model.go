@@ -103,26 +103,12 @@ func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var outModel Model
+	_, err = c.client.Do(req, &outModel)
 	if err != nil {
-		return model, err
+		return outModel, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return model, errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-		Model
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return model, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return model, ErrSuggestionbox(response.Error)
-	}
-	return response.Model, nil
+	return outModel, nil
 }
 
 // ListModels gets a Model by its ID.
@@ -140,24 +126,12 @@ func (c *Client) ListModels(ctx context.Context) ([]Model, error) {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var response struct {
+		Models []Model
+	}
+	_, err = c.client.Do(req, &response)
 	if err != nil {
 		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-		Models  []Model
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return nil, ErrSuggestionbox(response.Error)
 	}
 	return response.Models, nil
 }
@@ -178,26 +152,11 @@ func (c *Client) GetModel(ctx context.Context, modelID string) (Model, error) {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = c.client.Do(req, &model)
 	if err != nil {
 		return model, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return model, errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-		Model
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return model, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return model, ErrSuggestionbox(response.Error)
-	}
-	return response.Model, nil
+	return model, nil
 }
 
 // DeleteModel gets a Model by its ID.
@@ -215,24 +174,9 @@ func (c *Client) DeleteModel(ctx context.Context, modelID string) error {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = c.client.Do(req, nil)
 	if err != nil {
 		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-		Model
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return ErrSuggestionbox(response.Error)
 	}
 	return nil
 }
@@ -327,24 +271,9 @@ func (c *Client) GetModelStats(ctx context.Context, modelID string) (ModelStats,
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = c.client.Do(req, &stats)
 	if err != nil {
 		return stats, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return stats, errors.New(resp.Status)
-	}
-	var response struct {
-		Success bool
-		Error   string
-		ModelStats
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return stats, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return stats, ErrSuggestionbox(response.Error)
-	}
-	return response.ModelStats, nil
+	return stats, nil
 }
