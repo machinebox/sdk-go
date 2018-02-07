@@ -201,6 +201,11 @@ func (o *CheckOptions) NudeboxThreshold(v float64) {
 	o.fields["nudeboxThreshold"] = strconv.FormatFloat(v, 'f', -1, 64)
 }
 
+// FrameConcurrency sets the number of frames to process concurrently.
+func (o *CheckOptions) FrameConcurrency(concurrent int) {
+	o.fields["frameConcurrency"] = strconv.Itoa(concurrent)
+}
+
 // apply calls writeField for each field.
 // If o is nil, apply is noop.
 func (o *CheckOptions) apply(writeField func(key, value string) error) error {
