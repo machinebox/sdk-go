@@ -108,6 +108,7 @@ func TestCheckImage(t *testing.T) {
 		is.Equal(r.FormValue("tagboxInclude"), "custom")
 		is.Equal(r.FormValue("tagboxThreshold"), "0.7")
 		is.Equal(r.FormValue("nudeboxThreshold"), "0.2")
+		is.Equal(r.FormValue("frameConcurrency"), "10")
 		_, err = io.WriteString(w, `{
 			"success": true,
 			"id": "5a50b8067eced76bad103c53dd0f5226",
@@ -130,6 +131,7 @@ func TestCheckImage(t *testing.T) {
 	options.TagboxIncludeCustom()
 	options.TagboxThreshold(0.7)
 	options.NudeboxThreshold(0.2)
+	options.FrameConcurrency(10)
 	r := strings.NewReader(`(pretend this is image data)`)
 	video, err := vb.Check(r, options)
 	is.NoErr(err)
