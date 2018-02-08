@@ -69,13 +69,8 @@ type ModelOptions struct {
 	// RewardExpirationSeconds is the number of seconds to wait for
 	// the reward before it expires.
 	RewardExpirationSeconds int `json:"reward_expiration_seconds,omitempty"`
-
 	// Epsilon enables proportionate exploiting vs exploring ratio.
 	Epsilon float64 `json:"epsilon,omitempty"`
-
-	// SoftmaxLambda enables adaptive exploiting vs exploring ratio.
-	SoftmaxLambda float64 `json:"softmax_lambda,omitempty"`
-
 	// Ngrams describes the n-grams for text analysis.
 	Ngrams int `json:"ngrams,omitempty"`
 	// Skipgrams describes the skip-grams for the text analysis.
