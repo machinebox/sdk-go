@@ -33,6 +33,9 @@ type PredictRequest struct {
 
 // PredictResponse contains prediction choices.
 type PredictResponse struct {
+	// Limit sets the maximum number of choices that will be returned
+	// in a prediction.
+	Limit int `json:"limit"`
 	// Choices contains the predictions.
 	Choices []Prediction `json:"choices,omitempty"`
 }
