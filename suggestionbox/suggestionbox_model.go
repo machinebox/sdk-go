@@ -64,13 +64,25 @@ func NewChoice(id string, features ...Feature) Choice {
 	}
 }
 
+// ModelModes are used in ModelOptions to specify which mode
+// to use.
+const (
+	ModelModeCover   = "cover"
+	ModelModeEpsilon = "epsilon"
+)
+
 // ModelOptions describes the behaviours of a Model.
 type ModelOptions struct {
 	// RewardExpirationSeconds is the number of seconds to wait for
 	// the reward before it expires.
 	RewardExpirationSeconds int `json:"reward_expiration_seconds,omitempty"`
-	// Epsilon enables proportionate exploiting vs exploring ratio.
+	// Mode is the learning algorithm the model will use.
+	// Use either ModelModeCover or ModelModeEpsilon.
+	Mode string `json:"mode"`
+	// Epsilon enables proportionate exploiting vs exploring ratio when Mode is ModelModeEpsilon.
 	Epsilon float64 `json:"epsilon,omitempty"`
+	// Cover is the number of concurrent models to use when Mode is ModelModeCover.
+	Cover int `json:"cover,omitempty"`
 	// Ngrams describes the n-grams for text analysis.
 	Ngrams int `json:"ngrams,omitempty"`
 	// Skipgrams describes the skip-grams for the text analysis.
