@@ -35,8 +35,7 @@ func NewModel(id, name string, choices ...Choice) Model {
 	}
 }
 
-// Feature represents a single feature, to describe an input or a choice
-// for example age:28 or location:"London".
+// Feature represents a single feature, to describe an input or a choice.
 type Feature struct {
 	// Key is the name of the Feature.
 	Key string `json:"key"`

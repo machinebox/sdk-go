@@ -43,8 +43,7 @@ type ModelOptions struct {
 	Skipgrams int `json:"skipgrams,omitempty"`
 }
 
-// Feature represents a single feature, to describe an input
-// for example age:28 or location:"London".
+// Feature represents a single feature, to describe an input.
 type Feature struct {
 	// Key is the name of the Feature.
 	Key string `json:"key"`
