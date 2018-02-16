@@ -1,4 +1,4 @@
-package suggestionbox
+package classificationbox
 
 import (
 	"bytes"
@@ -11,22 +11,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Prediction is a predicted choice.
-type Prediction struct {
-	// ID is the choice identifier being predicted.
+// Class is a predicted choice.
+type Class struct {
+	// ID is the class being predicted.
 	ID string `json:"id,omitempty"`
-	// RewardID is the ID of the reward that should be sent if this
-	// prediction was successful.
-	RewardID string `json:"reward_id,omitempty"`
 	// Score is a numerical value indicating how this prediction relates
 	// to other predictions.
 	Score float64 `json:"score,omitempty"`
 }
 
-// PredictRequest contains information about the prediction that Suggestionbox
+// PredictRequest contains information about the prediction that Classificationbox
 // will make.
 type PredictRequest struct {
-	// Limit sets the maximum number of choices that will be returned
+	// Limit sets the maximum number of classes that will be returned
 	// in a prediction.
 	Limit int `json:"limit"`
 	// Inputs is a list of Feature objects that will be used when
@@ -36,14 +33,14 @@ type PredictRequest struct {
 
 // PredictResponse contains prediction choices.
 type PredictResponse struct {
-	// Choices contains the predictions.
-	Choices []Prediction `json:"choices,omitempty"`
+	// Classes contains the predictions.
+	Classes []Class `json:"classes,omitempty"`
 }
 
 // Predict asks a Model to make a prediction.
 func (c *Client) Predict(ctx context.Context, modelID string, request PredictRequest) (PredictResponse, error) {
 	var response PredictResponse
-	u, err := url.Parse(c.addr + "/" + path.Join("suggestionbox", "models", modelID, "predict"))
+	u, err := url.Parse(c.addr + "/" + path.Join("classificationbox", "models", modelID, "predict"))
 	if err != nil {
 		return response, err
 	}
