@@ -23,6 +23,7 @@ func TestPredict(t *testing.T) {
 		var req suggestionbox.PredictRequest
 		is.NoErr(json.NewDecoder(r.Body).Decode(&req))
 		is.Equal(req.Inputs[0].Key, "title")
+		is.Equal(req.Limit, 10)
 		resp := suggestionbox.PredictResponse{
 			Choices: []suggestionbox.Prediction{
 				{
@@ -53,6 +54,7 @@ func TestPredict(t *testing.T) {
 	defer srv.Close()
 	sb := suggestionbox.New(srv.URL)
 	predictReq := suggestionbox.PredictRequest{
+		Limit: 10,
 		Inputs: []suggestionbox.Feature{
 			{
 				Key:   "title",
