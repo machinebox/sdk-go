@@ -235,7 +235,7 @@ func FeatureImageURL(key string, url string) Feature {
 	}
 }
 
-// FeatureImageBase64 makes a Feature that is base 64 encoded.
+// FeatureImageBase64 makes a Feature that is a base64 encoded image.
 func FeatureImageBase64(key string, data string) Feature {
 	return Feature{
 		Type:  "image_base64",
