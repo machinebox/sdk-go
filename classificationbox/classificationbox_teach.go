@@ -20,7 +20,7 @@ type Example struct {
 
 // Teach gives an Example to a model for it to learn from.
 func (c *Client) Teach(ctx context.Context, modelID string, example Example) error {
-	u, err := url.Parse(c.addr + "/" + path.Join("classificationbox", "models", modelID, "predict"))
+	u, err := url.Parse(c.addr + "/" + path.Join("classificationbox", "models", modelID, "teach"))
 	if err != nil {
 		return err
 	}

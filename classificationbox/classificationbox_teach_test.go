@@ -17,7 +17,7 @@ func TestTeach(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apiCalls++
 		is.Equal(r.Method, http.MethodPost)
-		is.Equal(r.URL.Path, "/classificationbox/models/model1/predict")
+		is.Equal(r.URL.Path, "/classificationbox/models/model1/teach")
 		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		is.Equal(r.Header.Get("Content-Type"), "application/json; charset=utf-8")
 		var req classificationbox.Example
