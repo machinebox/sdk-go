@@ -24,7 +24,7 @@ func TestPredict(t *testing.T) {
 		is.NoErr(json.NewDecoder(r.Body).Decode(&req))
 		is.Equal(req.Inputs[0].Key, "title")
 		resp := classificationbox.PredictResponse{
-			Classes: []classificationbox.PredictedClass{
+			Classes: []classificationbox.Class{
 				{
 					ID:    "choice1",
 					Score: 0.7,
