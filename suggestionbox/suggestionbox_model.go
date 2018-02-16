@@ -118,7 +118,7 @@ func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
 	return outModel, nil
 }
 
-// ListModels gets a Model by its ID.
+// ListModels lists all models.
 func (c *Client) ListModels(ctx context.Context) ([]Model, error) {
 	u, err := url.Parse(c.addr + "/suggestionbox/models")
 	if err != nil {
@@ -166,7 +166,7 @@ func (c *Client) GetModel(ctx context.Context, modelID string) (Model, error) {
 	return model, nil
 }
 
-// DeleteModel gets a Model by its ID.
+// DeleteModel deletes a model by its ID.
 func (c *Client) DeleteModel(ctx context.Context, modelID string) error {
 	u, err := url.Parse(c.addr + "/" + path.Join("suggestionbox", "models", modelID))
 	if err != nil {
