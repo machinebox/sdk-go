@@ -84,6 +84,15 @@ func (c *Client) CheckURL(imageURL *url.URL) ([]Face, error) {
 
 // CheckBase64 checks the Base64 encoded image for faces.
 func (c *Client) CheckBase64(data string) ([]Face, error) {
+	return c.checkBase64WithOptions(data, nil)
+}
+
+// CheckBase64WithFaceprint checks the Base64 encoded image for faces and the object returned including the faceprints
+func (c *Client) CheckBase64WithFaceprint(data string) ([]Face, error) {
+	return c.checkBase64WithOptions(data, map[string]string{"faceprint": "true"})
+}
+
+func (c *Client) checkBase64WithOptions(data string, options map[string]string) ([]Face, error) {
 	u, err := url.Parse(c.addr + "/facebox/check")
 	if err != nil {
 		return nil, err
@@ -93,6 +102,9 @@ func (c *Client) CheckBase64(data string) ([]Face, error) {
 	}
 	form := url.Values{}
 	form.Set("base64", data)
+	for k, v := range options {
+		form.Set(k, v)
+	}
 	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err

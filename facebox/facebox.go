@@ -18,6 +18,7 @@ type Face struct {
 	Name       string
 	Matched    bool
 	Confidence float64
+	Faceprint  string
 }
 
 // Rect represents the coordinates of a face within an image.
