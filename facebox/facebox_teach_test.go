@@ -128,6 +128,25 @@ func TestTeachBase64(t *testing.T) {
 	is.NoErr(err)
 }
 
+func TestTeachFaceprint(t *testing.T) {
+	is := is.New(t)
+	faceprint := "faceprint1"
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		is.Equal(r.URL.Path, "/facebox/teach")
+		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
+		is.Equal(r.FormValue("faceprint"), faceprint)
+		is.Equal(r.FormValue("name"), "John Lennon")
+		is.Equal(r.FormValue("id"), "john1.jpg")
+		io.WriteString(w, `{
+			"success": true
+		}`)
+	}))
+	defer srv.Close()
+	fb := facebox.New(srv.URL)
+	err := fb.TeachFaceprint(faceprint, "john1.jpg", "John Lennon")
+	is.NoErr(err)
+}
+
 func TestRemove(t *testing.T) {
 	is := is.New(t)
 
