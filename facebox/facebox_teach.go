@@ -97,6 +97,37 @@ func (c *Client) TeachURL(imageURL *url.URL, id, name string) error {
 	return c.parseResponse(resp.Body)
 }
 
+// TeachFaceprint teaches facebox the face that is represented by the faceprint as a parameter.
+// See Teach for more information.
+func (c *Client) TeachFaceprint(faceprint, id, name string) error {
+	u, err := url.Parse(c.addr + "/facebox/teach")
+	if err != nil {
+		return err
+	}
+	if !u.IsAbs() {
+		return errors.New("box address must be absolute")
+	}
+	form := url.Values{}
+	form.Set("faceprint", faceprint)
+	form.Set("name", name)
+	form.Set("id", id)
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New(resp.Status)
+	}
+	return c.parseResponse(resp.Body)
+}
+
 // TeachBase64 teaches facebox the face in the Base64 encoded image.
 // See Teach for more information.
 func (c *Client) TeachBase64(data, id, name string) error {
