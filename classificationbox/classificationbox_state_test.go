@@ -47,7 +47,7 @@ func TestPostState(t *testing.T) {
 	defer srv.Close()
 	cb := classificationbox.New(srv.URL)
 	r := strings.NewReader(`(pretend this is the state file)`)
-	model, err := cb.PostState(context.Background(), r)
+	model, err := cb.PostState(context.Background(), r, false)
 	is.NoErr(err)
 	is.Equal(model.ID, "model1")
 }
@@ -68,7 +68,7 @@ func TestPostStateError(t *testing.T) {
 	defer srv.Close()
 	cb := classificationbox.New(srv.URL)
 	r := strings.NewReader(`(pretend this is the state file)`)
-	_, err := cb.PostState(context.Background(), r)
+	_, err := cb.PostState(context.Background(), r, false)
 	is.True(err != nil)
 	is.Equal(err.Error(), "classificationbox: something went wrong")
 }
@@ -80,13 +80,14 @@ func TestPostStateURL(t *testing.T) {
 		is.Equal(r.URL.Path, "/classificationbox/state")
 		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		is.Equal(r.FormValue("url"), "https://test.machinebox.io/test.classificationbox")
+		is.Equal(r.FormValue("predict_only"), "true")
 		io.WriteString(w, `{"success":true,"id":"model1"}`)
 	}))
 	defer srv.Close()
 	cb := classificationbox.New(srv.URL)
 	u, err := url.Parse("https://test.machinebox.io/test.classificationbox")
 	is.NoErr(err)
-	model, err := cb.PostStateURL(context.Background(), u)
+	model, err := cb.PostStateURL(context.Background(), u, true)
 	is.NoErr(err)
 	is.Equal(model.ID, "model1")
 }
@@ -104,7 +105,7 @@ func TestPostStateURLError(t *testing.T) {
 	cb := classificationbox.New(srv.URL)
 	u, err := url.Parse("https://test.machinebox.io/test.classificationbox")
 	is.NoErr(err)
-	_, err = cb.PostStateURL(context.Background(), u)
+	_, err = cb.PostStateURL(context.Background(), u, true)
 	is.True(err != nil)
 	is.Equal(err.Error(), "classificationbox: something went wrong")
 }

@@ -36,7 +36,7 @@ func (c *Client) OpenState(ctx context.Context, modelID string) (io.ReadCloser, 
 
 // PostState uploads new state data and returns the Model that was contained
 // in the state file.
-func (c *Client) PostState(ctx context.Context, r io.Reader) (Model, error) {
+func (c *Client) PostState(ctx context.Context, r io.Reader, predictOnly bool) (Model, error) {
 	var model Model
 	var buf bytes.Buffer
 	w := multipart.NewWriter(&buf)
@@ -58,6 +58,11 @@ func (c *Client) PostState(ctx context.Context, r io.Reader) (Model, error) {
 	if !u.IsAbs() {
 		return model, errors.New("box address must be absolute")
 	}
+	if predictOnly {
+		q := u.Query()
+		q.Set("predict_only", "true")
+		u.RawQuery = q.Encode()
+	}
 	req, err := http.NewRequest("POST", u.String(), &buf)
 	if err != nil {
 		return model, err
@@ -74,7 +79,7 @@ func (c *Client) PostState(ctx context.Context, r io.Reader) (Model, error) {
 
 // PostStateURL tells Classificationbox to download the state file specified
 // by the URL and returns the Model that was contained in the state file.
-func (c *Client) PostStateURL(ctx context.Context, stateURL *url.URL) (Model, error) {
+func (c *Client) PostStateURL(ctx context.Context, stateURL *url.URL, predictOnly bool) (Model, error) {
 	var model Model
 	u, err := url.Parse(c.addr + "/classificationbox/state")
 	if err != nil {
@@ -88,6 +93,9 @@ func (c *Client) PostStateURL(ctx context.Context, stateURL *url.URL) (Model, er
 	}
 	form := url.Values{}
 	form.Set("url", stateURL.String())
+	if predictOnly {
+		form.Set("predict_only", "true")
+	}
 	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
 	if err != nil {
 		return model, err
