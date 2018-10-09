@@ -75,6 +75,8 @@ type checkFaceprintRequest struct {
 	Faceprints []string `json:"faceprints"`
 }
 
+// CheckFaceprints checks the list of faceprints to see if they
+// match any known faces.
 func (c *Client) CheckFaceprints(faceprints []string) ([]Face, error) {
 	if len(faceprints) == 0 {
 		return nil, errors.New("faceprints can not be empty")
