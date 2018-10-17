@@ -29,8 +29,9 @@ type Rect struct {
 
 // Similar represents a similar face.
 type Similar struct {
-	ID   string
-	Name string
+	ID         string
+	Name       string
+	Confidence float64
 }
 
 // Client is an HTTP client that can make requests to the box.

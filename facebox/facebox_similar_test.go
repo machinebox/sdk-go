@@ -29,15 +29,18 @@ func TestSimilarURL(t *testing.T) {
 			"similar": [
 				{
 					"id": "file1.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.9
 				},
 				{
 					"id": "file2.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.8
 				},
 				{
 					"id": "file3.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.7
 				}
 			]
 		}`)
@@ -51,12 +54,15 @@ func TestSimilarURL(t *testing.T) {
 	is.Equal(len(similar), 3)
 	is.Equal(similar[0].ID, "file1.jpg")
 	is.Equal(similar[0].Name, "Ringo Starr")
+	is.Equal(similar[0].Confidence, 0.9)
 
 	is.Equal(similar[1].ID, "file2.jpg")
 	is.Equal(similar[1].Name, "Ringo Starr")
+	is.Equal(similar[1].Confidence, 0.8)
 
 	is.Equal(similar[2].ID, "file3.jpg")
 	is.Equal(similar[2].Name, "Ringo Starr")
+	is.Equal(similar[2].Confidence, 0.7)
 
 }
 
@@ -102,15 +108,18 @@ func TestSimilarImage(t *testing.T) {
 			"similar": [
 				{
 					"id": "file1.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.9
 				},
 				{
 					"id": "file2.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.8
 				},
 				{
 					"id": "file3.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.7
 				}
 			]
 		}`)
@@ -124,12 +133,15 @@ func TestSimilarImage(t *testing.T) {
 	is.Equal(len(similar), 3)
 	is.Equal(similar[0].ID, "file1.jpg")
 	is.Equal(similar[0].Name, "Ringo Starr")
+	is.Equal(similar[0].Confidence, 0.9)
 
 	is.Equal(similar[1].ID, "file2.jpg")
 	is.Equal(similar[1].Name, "Ringo Starr")
+	is.Equal(similar[1].Confidence, 0.8)
 
 	is.Equal(similar[2].ID, "file3.jpg")
 	is.Equal(similar[2].Name, "Ringo Starr")
+	is.Equal(similar[2].Confidence, 0.7)
 
 }
 
@@ -172,15 +184,18 @@ func TestSimilarID(t *testing.T) {
 			"similar": [
 				{
 					"id": "file1.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.9
 				},
 				{
 					"id": "file2.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.8
 				},
 				{
 					"id": "file3.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.7
 				}
 			]
 		}`)
@@ -194,12 +209,16 @@ func TestSimilarID(t *testing.T) {
 	is.Equal(len(similar), 3)
 	is.Equal(similar[0].ID, "file1.jpg")
 	is.Equal(similar[0].Name, "Ringo Starr")
+	is.Equal(similar[0].Confidence, 0.9)
 
 	is.Equal(similar[1].ID, "file2.jpg")
 	is.Equal(similar[1].Name, "Ringo Starr")
+	is.Equal(similar[1].Confidence, 0.8)
 
 	is.Equal(similar[2].ID, "file3.jpg")
 	is.Equal(similar[2].Name, "Ringo Starr")
+	is.Equal(similar[2].Confidence, 0.7)
+
 }
 
 func TestSimilarBase64(t *testing.T) {
@@ -217,15 +236,18 @@ func TestSimilarBase64(t *testing.T) {
 			"similar": [
 				{
 					"id": "file1.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.9
 				},
 				{
 					"id": "file2.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.8
 				},
 				{
 					"id": "file3.jpg",
-					"name": "Ringo Starr"
+					"name": "Ringo Starr",
+					"confidence": 0.7
 				}
 			]
 		}`)
@@ -264,15 +286,18 @@ func TestSimilarsImage(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						}
 					]
 				},
@@ -284,15 +309,18 @@ func TestSimilarsImage(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						}
 					]
 				},
@@ -304,15 +332,18 @@ func TestSimilarsImage(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						}
 					]
 				}
@@ -354,15 +385,18 @@ func TestSimilarsURL(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						}
 					]
 				},
@@ -374,15 +408,18 @@ func TestSimilarsURL(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						}
 					]
 				},
@@ -394,15 +431,18 @@ func TestSimilarsURL(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						}
 					]
 				}
@@ -444,15 +484,18 @@ func TestSimilarsBase64(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "Ringo Starr"
+							"name": "Ringo Starr",
+							"confidence": 0.9
 						}
 					]
 				},
@@ -464,15 +507,18 @@ func TestSimilarsBase64(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "Paul McCartney"
+							"name": "Paul McCartney",
+							"confidence": 0.9
 						}
 					]
 				},
@@ -484,15 +530,18 @@ func TestSimilarsBase64(t *testing.T) {
 					"similar_faces": [
 						{
 							"id": "file1.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						},
 						{
 							"id": "file2.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						},
 						{
 							"id": "file3.jpg",
-							"name": "John Lennon"
+							"name": "John Lennon",
+							"confidence": 0.9
 						}
 					]
 				}
@@ -510,5 +559,6 @@ func TestSimilarsBase64(t *testing.T) {
 	is.Equal(faces[0].Rect.Height, 100)
 	is.Equal(len(faces[0].SimilarFaces), 3)
 	is.Equal(faces[0].SimilarFaces[0].ID, "file1.jpg")
+	is.Equal(faces[0].SimilarFaces[0].Confidence, 0.9)
 
 }
