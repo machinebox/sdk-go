@@ -56,10 +56,9 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 		}
 		return nil, errors.Errorf("%s: %s", c.boxname, o.Error)
 	}
-	if v == nil {
-		if err := json.Unmarshal(b, &v); err != nil {
-			return nil, errors.Wrap(err, "decode response data")
-		}
+	if err := json.Unmarshal(b, &v); err != nil {
+		return nil, errors.Wrap(err, "decode response data")
 	}
+
 	return resp, nil
 }
