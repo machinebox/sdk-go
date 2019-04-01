@@ -44,6 +44,7 @@ func (c *Client) Check(image io.Reader) (CheckResponse, error) {
 	if err != nil {
 		return CheckResponse{}, err
 	}
+	defer resp.Body.Close()
 	return c.parseCheckResponse(resp.Body)
 }
 
