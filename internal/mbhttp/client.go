@@ -59,6 +59,5 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	if err := json.Unmarshal(b, &v); err != nil {
 		return nil, errors.Wrap(err, "decode response data")
 	}
-
 	return resp, nil
 }
