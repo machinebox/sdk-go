@@ -2,13 +2,13 @@ package objectbox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -40,12 +40,13 @@ func (c *Client) Check(image io.Reader) (CheckResponse, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	client := mbhttp.New("objectbox", c.HTTPClient)
+	var response CheckResponse
+	_, err = client.Do(req, &response)
 	if err != nil {
 		return CheckResponse{}, err
 	}
-	defer resp.Body.Close()
-	return c.parseCheckResponse(resp.Body)
+	return response, nil
 }
 
 // CheckURL gets the tags for the image at the specified URL.
@@ -68,12 +69,13 @@ func (c *Client) CheckURL(imageURL *url.URL) (CheckResponse, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	client := mbhttp.New("objectbox", c.HTTPClient)
+	var response CheckResponse
+	_, err = client.Do(req, &response)
 	if err != nil {
 		return CheckResponse{}, err
 	}
-	defer resp.Body.Close()
-	return c.parseCheckResponse(resp.Body)
+	return response, nil
 }
 
 // CheckBase64 gets the tags for the image in the encoded Base64 data string.
@@ -93,26 +95,11 @@ func (c *Client) CheckBase64(data string) (CheckResponse, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	client := mbhttp.New("objectbox", c.HTTPClient)
+	var response CheckResponse
+	_, err = client.Do(req, &response)
 	if err != nil {
 		return CheckResponse{}, err
 	}
-	defer resp.Body.Close()
-	return c.parseCheckResponse(resp.Body)
-}
-
-// parseCheckResponse parses the check response data.
-func (c *Client) parseCheckResponse(r io.Reader) (CheckResponse, error) {
-	var resp struct {
-		Success bool
-		Error   string
-		CheckResponse
-	}
-	if err := json.NewDecoder(r).Decode(&resp); err != nil {
-		return CheckResponse{}, errors.Wrap(err, "decoding response")
-	}
-	if !resp.Success {
-		return CheckResponse{}, ErrObjectbox(resp.Error)
-	}
-	return resp.CheckResponse, nil
+	return response, nil
 }

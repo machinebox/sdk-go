@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 )
 
 // PostState uploads new state data.
@@ -38,12 +40,12 @@ func (c *Client) PostState(r io.Reader) error {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	client := mbhttp.New("objectbox", c.HTTPClient)
+	_, err = client.Do(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // PostStateURL tells objectbox to download the state file specified
@@ -67,12 +69,8 @@ func (c *Client) PostStateURL(stateURL *url.URL) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
+	client := mbhttp.New("objectbox", c.HTTPClient)
+	_, err = client.Do(req, nil)
 	if err != nil {
 		return err
 	}

@@ -3,8 +3,10 @@ package mbhttp
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -27,6 +29,7 @@ func New(boxname string, client *http.Client) *Client {
 }
 
 // Do makes the request and unmarshals the response into v.
+// The Body in the Response will be closed after calling this method.
 func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -43,18 +46,20 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	}
 	if err := json.Unmarshal(b, &o); err != nil {
 		if resp.StatusCode < 200 || resp.StatusCode >= 400 {
-			return nil, errors.Errorf("%s: %s", c.boxname, resp.Status)
+			return nil, errors.Errorf("%s: %d: %s", c.boxname, resp.StatusCode, strings.TrimSpace(string(b)))
 		}
 		return nil, errors.Wrap(err, "decode common response data")
 	}
 	if !o.Success {
 		if o.Error == "" {
-			o.Error = "an unknown error occurred in the box"
+			o.Error = fmt.Sprintf("%d: %s", resp.StatusCode, strings.TrimSpace(string(b)))
 		}
 		return nil, errors.Errorf("%s: %s", c.boxname, o.Error)
 	}
-	if err := json.Unmarshal(b, &v); err != nil {
-		return nil, errors.Wrap(err, "decode response data")
+	if v == nil {
+		if err := json.Unmarshal(b, &v); err != nil {
+			return nil, errors.Wrap(err, "decode response data")
+		}
 	}
 	return resp, nil
 }

@@ -3,7 +3,6 @@ package objectbox
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -88,18 +87,4 @@ type CheckDetectorResponse struct {
 	ID      string   `json:"id"`
 	Name    string   `json:"name"`
 	Objects []Object `json:"objects"`
-}
-
-func (c *Client) parseResponse(r io.Reader) error {
-	var response struct {
-		Success bool
-		Error   string
-	}
-	if err := json.NewDecoder(r).Decode(&response); err != nil {
-		return errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return ErrObjectbox(response.Error)
-	}
-	return nil
 }
