@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/machinebox/sdk-go/boxutil"
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -94,15 +95,14 @@ func (c *Client) Check(image io.Reader) (float64, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		Nude float64
+	}
+	_, err = mbhttp.New("nudebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return 0, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return checkResponse.Nude, nil
 }
 
 // CheckURL gets the nudity probability for the image at the specified URL.
@@ -125,15 +125,14 @@ func (c *Client) CheckURL(imageURL *url.URL) (float64, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		Nude float64
+	}
+	_, err = mbhttp.New("nudebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return 0, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return checkResponse.Nude, nil
 }
 
 // CheckBase64 gets the nudity probability for the Base64 encoded image.
@@ -153,29 +152,12 @@ func (c *Client) CheckBase64(data string) (float64, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		Nude float64
+	}
+	_, err = mbhttp.New("nudebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return 0, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return 0, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
-}
-
-// parseCheckResponse parses the check response data.
-func (c *Client) parseCheckResponse(r io.Reader) (float64, error) {
-	var checkResponse struct {
-		Success bool
-		Error   string
-		Nude    float64
-	}
-	if err := json.NewDecoder(r).Decode(&checkResponse); err != nil {
-		return 0, errors.Wrap(err, "decoding response")
-	}
-	if !checkResponse.Success {
-		return 0, ErrNudebox(checkResponse.Error)
 	}
 	return checkResponse.Nude, nil
 }
