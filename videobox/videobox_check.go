@@ -2,7 +2,6 @@ package videobox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -11,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -48,15 +48,14 @@ func (c *Client) Check(video io.Reader, options *CheckOptions) (*Video, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		ID string
+	}
+	_, err = mbhttp.New("videobox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return &Video{ID: checkResponse.ID}, nil
 }
 
 // CheckURL starts processing the video at the specified URL.
@@ -87,15 +86,14 @@ func (c *Client) CheckURL(videoURL *url.URL, options *CheckOptions) (*Video, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		ID string
+	}
+	_, err = mbhttp.New("videobox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return &Video{ID: checkResponse.ID}, nil
 }
 
 // CheckBase64 starts processing the video from the base64 encoded data string.
@@ -123,15 +121,14 @@ func (c *Client) CheckBase64(data string, options *CheckOptions) (*Video, error)
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		ID string
+	}
+	_, err = mbhttp.New("videobox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return &Video{ID: checkResponse.ID}, nil
 }
 
 // CheckOptions are additional options that control
@@ -218,22 +215,4 @@ func (o *CheckOptions) apply(writeField func(key, value string) error) error {
 		}
 	}
 	return nil
-}
-
-func (c *Client) parseCheckResponse(r io.Reader) (*Video, error) {
-	var checkResponse struct {
-		Success bool
-		Error   string
-		ID      string
-	}
-	if err := json.NewDecoder(r).Decode(&checkResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !checkResponse.Success {
-		return nil, ErrVideobox(checkResponse.Error)
-	}
-	v := &Video{
-		ID: checkResponse.ID,
-	}
-	return v, nil
 }
