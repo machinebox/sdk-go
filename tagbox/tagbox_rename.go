@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -35,12 +36,7 @@ func (c *Client) Rename(id, tag string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
@@ -74,12 +70,7 @@ func (c *Client) RenameAll(oldTag, newTag string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}

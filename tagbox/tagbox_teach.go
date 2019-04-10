@@ -2,13 +2,13 @@ package tagbox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -52,12 +52,11 @@ func (c *Client) Teach(image io.Reader, id, tag string) error {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // TeachURL teaches tagbox the image with a custom tag at the specified URL.
@@ -83,12 +82,7 @@ func (c *Client) TeachURL(imageURL *url.URL, id, tag string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
@@ -115,12 +109,7 @@ func (c *Client) TeachBase64(data, id, tag string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
@@ -147,29 +136,11 @@ func (c *Client) Remove(id string) error {
 	if err != nil {
 		return err
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
-	}
-	defer resp.Body.Close()
-	err = c.parseResponse(resp.Body)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *Client) parseResponse(r io.Reader) error {
-	var response struct {
-		Success bool
-		Error   string
-	}
-	if err := json.NewDecoder(r).Decode(&response); err != nil {
-		return errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return ErrTagbox(response.Error)
 	}
 	return nil
 }
