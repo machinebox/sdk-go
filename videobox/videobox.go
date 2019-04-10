@@ -2,12 +2,12 @@
 package videobox
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"time"
 
 	"github.com/machinebox/sdk-go/boxutil"
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -60,15 +60,8 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("videobox", c.HTTPClient).DoUnmarshal(req, &info)
 	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return nil, err
 	}
 	return &info, nil
