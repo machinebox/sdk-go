@@ -40,7 +40,7 @@ func (c *Client) Reward(ctx context.Context, modelID string, reward Reward) erro
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, nil)
+	_, err = c.client.DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}

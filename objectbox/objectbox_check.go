@@ -42,7 +42,7 @@ func (c *Client) Check(image io.Reader) (CheckResponse, error) {
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	client := mbhttp.New("objectbox", c.HTTPClient)
 	var response CheckResponse
-	_, err = client.Do(req, &response)
+	_, err = client.DoUnmarshal(req, &response)
 	if err != nil {
 		return CheckResponse{}, err
 	}
@@ -71,7 +71,7 @@ func (c *Client) CheckURL(imageURL *url.URL) (CheckResponse, error) {
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	client := mbhttp.New("objectbox", c.HTTPClient)
 	var response CheckResponse
-	_, err = client.Do(req, &response)
+	_, err = client.DoUnmarshal(req, &response)
 	if err != nil {
 		return CheckResponse{}, err
 	}
@@ -97,7 +97,7 @@ func (c *Client) CheckBase64(data string) (CheckResponse, error) {
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	client := mbhttp.New("objectbox", c.HTTPClient)
 	var response CheckResponse
-	_, err = client.Do(req, &response)
+	_, err = client.DoUnmarshal(req, &response)
 	if err != nil {
 		return CheckResponse{}, err
 	}

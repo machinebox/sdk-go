@@ -110,7 +110,7 @@ func (c *Client) CreateModel(ctx context.Context, model Model) (Model, error) {
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	var outModel Model
-	_, err = c.client.Do(req, &outModel)
+	_, err = c.client.DoUnmarshal(req, &outModel)
 	if err != nil {
 		return outModel, err
 	}
@@ -135,7 +135,7 @@ func (c *Client) ListModels(ctx context.Context) ([]Model, error) {
 	var response struct {
 		Models []Model
 	}
-	_, err = c.client.Do(req, &response)
+	_, err = c.client.DoUnmarshal(req, &response)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func (c *Client) GetModel(ctx context.Context, modelID string) (Model, error) {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, &model)
+	_, err = c.client.DoUnmarshal(req, &model)
 	if err != nil {
 		return model, err
 	}
@@ -180,7 +180,7 @@ func (c *Client) DeleteModel(ctx context.Context, modelID string) error {
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, nil)
+	_, err = c.client.DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
@@ -277,7 +277,7 @@ func (c *Client) GetModelStats(ctx context.Context, modelID string) (ModelStats,
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, &stats)
+	_, err = c.client.DoUnmarshal(req, &stats)
 	if err != nil {
 		return stats, err
 	}

@@ -28,9 +28,9 @@ func New(boxname string, client *http.Client) *Client {
 	}
 }
 
-// Do makes the request and unmarshals the response into v.
+// DoUnmarshal makes the request and unmarshals the response into v.
 // The Body in the Response will be closed after calling this method.
-func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
+func (c *Client) DoUnmarshal(req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err

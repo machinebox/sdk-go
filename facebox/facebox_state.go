@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 )
 
 // OpenState opens the state file for reading.
@@ -27,9 +29,6 @@ func (c *Client) OpenState() (io.ReadCloser, error) {
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
-	}
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
 	}
 	return resp.Body, nil
 }
@@ -60,17 +59,13 @@ func (c *Client) PostState(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // PostStateURL tells facebox to download the state file specified
@@ -94,13 +89,9 @@ func (c *Client) PostStateURL(stateURL *url.URL) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }

@@ -42,7 +42,7 @@ func TestDo(t *testing.T) {
 	req, err := http.NewRequest(http.MethodPost, srv.URL+"/something", &buf)
 	c := mbhttp.New("testbox", http.DefaultClient)
 	var actualOut obj
-	resp, err := c.Do(req, &actualOut)
+	resp, err := c.DoUnmarshal(req, &actualOut)
 	is.NoErr(err)
 	defer resp.Body.Close()
 	is.Equal(actualOut.Field1, out.Field1)
@@ -80,7 +80,7 @@ func TestDoBoxError(t *testing.T) {
 	req, err := http.NewRequest(http.MethodPost, srv.URL+"/something", &buf)
 	c := mbhttp.New("testbox", http.DefaultClient)
 	var actualOut obj
-	_, err = c.Do(req, &actualOut)
+	_, err = c.DoUnmarshal(req, &actualOut)
 	is.True(err != nil)
 	is.Equal(err.Error(), "testbox: something went wrong")
 }
@@ -114,7 +114,7 @@ func TestDoBoxMissingError(t *testing.T) {
 	req, err := http.NewRequest(http.MethodPost, srv.URL+"/something", &buf)
 	c := mbhttp.New("testbox", http.DefaultClient)
 	var actualOut obj
-	_, err = c.Do(req, &actualOut)
+	_, err = c.DoUnmarshal(req, &actualOut)
 	is.True(err != nil)
 	is.Equal(err.Error(), `testbox: 200: {"success":false,"error":""}`)
 }
@@ -143,7 +143,7 @@ func TestDoHTTPError(t *testing.T) {
 	req, err := http.NewRequest(http.MethodPost, srv.URL+"/something", &buf)
 	c := mbhttp.New("testbox", http.DefaultClient)
 	var actualOut obj
-	_, err = c.Do(req, &actualOut)
+	_, err = c.DoUnmarshal(req, &actualOut)
 	is.True(err != nil)
 	is.Equal(err.Error(), "testbox: 500: something went wrong")
 }
@@ -178,7 +178,7 @@ func TestDoNoResponseExpected(t *testing.T) {
 	is.NoErr(json.NewEncoder(&buf).Encode(in))
 	req, err := http.NewRequest(http.MethodPost, srv.URL+"/something", &buf)
 	c := mbhttp.New("testbox", http.DefaultClient)
-	_, err = c.Do(req, nil)
+	_, err = c.DoUnmarshal(req, nil)
 	is.NoErr(err)
 }
 func TestDoNoResponseExpectedWithError(t *testing.T) {
@@ -210,7 +210,7 @@ func TestDoNoResponseExpectedWithError(t *testing.T) {
 	is.NoErr(json.NewEncoder(&buf).Encode(in))
 	req, err := http.NewRequest(http.MethodPost, srv.URL+"/something", &buf)
 	c := mbhttp.New("testbox", http.DefaultClient)
-	_, err = c.Do(req, nil)
+	_, err = c.DoUnmarshal(req, nil)
 	is.True(err != nil)
 	is.Equal(err.Error(), "testbox: something went wrong")
 }

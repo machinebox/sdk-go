@@ -2,13 +2,13 @@ package facebox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -40,15 +40,14 @@ func (c *Client) Check(image io.Reader) ([]Face, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		Faces []Face
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return checkResponse.Faces, nil
 }
 
 // CheckURL checks the image at the specified URL for faces.
@@ -71,15 +70,14 @@ func (c *Client) CheckURL(imageURL *url.URL) ([]Face, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		Faces []Face
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
+	return checkResponse.Faces, nil
 }
 
 // CheckBase64 checks the Base64 encoded image for faces.
@@ -111,28 +109,12 @@ func (c *Client) checkBase64WithOptions(data string, options map[string]string) 
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var checkResponse struct {
+		Faces []Face
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
 	if err != nil {
 		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckResponse(resp.Body)
-}
-
-func (c *Client) parseCheckResponse(r io.Reader) ([]Face, error) {
-	var checkResponse struct {
-		Success bool
-		Error   string
-		Faces   []Face
-	}
-	if err := json.NewDecoder(r).Decode(&checkResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !checkResponse.Success {
-		return nil, ErrFacebox(checkResponse.Error)
 	}
 	return checkResponse.Faces, nil
 }

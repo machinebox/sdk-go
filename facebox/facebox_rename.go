@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -35,15 +36,11 @@ func (c *Client) Rename(id, name string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // RenameAll changes the name for all the faces that match a given name
@@ -73,13 +70,9 @@ func (c *Client) RenameAll(oldName, newName string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }

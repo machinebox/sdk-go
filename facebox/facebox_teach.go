@@ -2,13 +2,13 @@ package facebox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -52,15 +52,11 @@ func (c *Client) Teach(image io.Reader, id, name string) error {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // TeachURL teaches facebox the face in the image at the specified URL.
@@ -86,15 +82,11 @@ func (c *Client) TeachURL(imageURL *url.URL, id, name string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // TeachFaceprint teaches facebox the face that is represented by the faceprint as a parameter.
@@ -117,15 +109,11 @@ func (c *Client) TeachFaceprint(faceprint, id, name string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // TeachBase64 teaches facebox the face in the Base64 encoded image.
@@ -148,15 +136,11 @@ func (c *Client) TeachBase64(data, id, name string) error {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
+	return nil
 }
 
 // Remove makes facebox to forget a face
@@ -180,27 +164,9 @@ func (c *Client) Remove(id string) error {
 		return err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
-	}
-	return c.parseResponse(resp.Body)
-}
-
-func (c *Client) parseResponse(r io.Reader) error {
-	var response struct {
-		Success bool
-		Error   string
-	}
-	if err := json.NewDecoder(r).Decode(&response); err != nil {
-		return errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return ErrFacebox(response.Error)
 	}
 	return nil
 }
