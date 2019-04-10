@@ -119,6 +119,27 @@ func TestDoBoxMissingError(t *testing.T) {
 	is.Equal(err.Error(), `testbox: 200: {"success":false,"error":""}`)
 }
 
+func TestDoBoxMissingBody(t *testing.T) {
+	is := is.New(t)
+	type obj struct {
+		Field1 string `json:"field1"`
+		Field2 int    `json:"field2"`
+		Field3 bool   `json:"field3"`
+	}
+	in := obj{Field1: "in", Field2: 123, Field3: true}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+	var buf bytes.Buffer
+	is.NoErr(json.NewEncoder(&buf).Encode(in))
+	req, err := http.NewRequest(http.MethodDelete, srv.URL+"/something", &buf)
+	c := mbhttp.New("testbox", http.DefaultClient)
+	var actualOut obj
+	_, err = c.DoUnmarshal(req, &actualOut)
+	is.NoErr(err)
+}
+
 func TestDoHTTPError(t *testing.T) {
 	is := is.New(t)
 	type obj struct {

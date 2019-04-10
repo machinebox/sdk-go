@@ -40,6 +40,12 @@ func (c *Client) DoUnmarshal(req *http.Request, v interface{}) (*http.Response, 
 	if err != nil {
 		return nil, errors.Wrap(err, "read response data")
 	}
+	if len(b) == 0 {
+		if resp.StatusCode < 200 || resp.StatusCode >= 400 {
+			return nil, errors.Errorf("%s: %s", c.boxname, resp.Status)
+		}
+		return resp, nil
+	}
 	var o struct {
 		Success bool
 		Error   string
