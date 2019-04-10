@@ -2,7 +2,6 @@ package facebox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -42,15 +42,14 @@ func (c *Client) Similar(image io.Reader) ([]Similar, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	var similarResponse struct {
+		Similar []Similar
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarResponse(resp.Body)
+	return similarResponse.Similar, nil
 }
 
 // SimilarURL checks the image at the specified URL for similar faces.
@@ -74,15 +73,14 @@ func (c *Client) SimilarURL(imageURL *url.URL) ([]Similar, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var similarResponse struct {
+		Similar []Similar
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarResponse(resp.Body)
+	return similarResponse.Similar, nil
 }
 
 // SimilarID returns similar faces based on the ID provided.
@@ -104,16 +102,16 @@ func (c *Client) SimilarID(id string) ([]Similar, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var similarResponse struct {
+		Similar []Similar
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarResponse(resp.Body)
+	return similarResponse.Similar, nil
 }
 
 // SimilarBase64 checks the Base64 encoded image for similar faces.
@@ -134,28 +132,12 @@ func (c *Client) SimilarBase64(data string) ([]Similar, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarResponse(resp.Body)
-}
-
-func (c *Client) parseSimilarResponse(r io.Reader) ([]Similar, error) {
 	var similarResponse struct {
-		Success bool
-		Error   string
 		Similar []Similar
 	}
-	if err := json.NewDecoder(r).Decode(&similarResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !similarResponse.Success {
-		return nil, ErrFacebox(similarResponse.Error)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
+	if err != nil {
+		return nil, err
 	}
 	return similarResponse.Similar, nil
 }
@@ -201,15 +183,14 @@ func (c *Client) Similars(image io.Reader, limit int) ([]SimilarFace, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	var similarsResponse struct {
+		Faces []SimilarFace
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarsResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarsResponse(resp.Body)
+	return similarsResponse.Faces, nil
 }
 
 // SimilarsURL checks the image at the specified URL for similar faces.
@@ -237,15 +218,14 @@ func (c *Client) SimilarsURL(imageURL *url.URL, limit int) ([]SimilarFace, error
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var similarsResponse struct {
+		Faces []SimilarFace
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarsResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarsResponse(resp.Body)
+	return similarsResponse.Faces, nil
 }
 
 // SimilarsBase64 checks the Base64 encoded image for similar faces.
@@ -270,28 +250,12 @@ func (c *Client) SimilarsBase64(data string, limit int) ([]SimilarFace, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var similarsResponse struct {
+		Faces []SimilarFace
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &similarsResponse)
 	if err != nil {
 		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseSimilarsResponse(resp.Body)
-}
-
-func (c *Client) parseSimilarsResponse(r io.Reader) ([]SimilarFace, error) {
-	var similarsResponse struct {
-		Success bool
-		Error   string
-		Faces   []SimilarFace
-	}
-	if err := json.NewDecoder(r).Decode(&similarsResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !similarsResponse.Success {
-		return nil, ErrFacebox(similarsResponse.Error)
 	}
 	return similarsResponse.Faces, nil
 }

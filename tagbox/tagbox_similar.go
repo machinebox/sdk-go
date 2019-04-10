@@ -2,13 +2,13 @@ package tagbox
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -41,12 +41,14 @@ func (c *Client) Similar(image io.Reader) ([]Tag, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	resp, err := c.HTTPClient.Do(req)
+	var similarResponse struct {
+		Similar []Tag
+	}
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	return c.parseSimilarResponse(resp.Body)
+	return similarResponse.Similar, nil
 }
 
 // SimilarURL checks the image at the specified URL for similar
@@ -70,12 +72,14 @@ func (c *Client) SimilarURL(imageURL *url.URL) ([]Tag, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var similarResponse struct {
+		Similar []Tag
+	}
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	return c.parseSimilarResponse(resp.Body)
+	return similarResponse.Similar, nil
 }
 
 // SimilarBase64 checks the image at the specified URL for similar
@@ -96,12 +100,14 @@ func (c *Client) SimilarBase64(data string) ([]Tag, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	var similarResponse struct {
+		Similar []Tag
+	}
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	return c.parseSimilarResponse(resp.Body)
+	return similarResponse.Similar, nil
 }
 
 // SimilarID returns similar images based on the ID provided
@@ -124,25 +130,12 @@ func (c *Client) SimilarID(id string) ([]Tag, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	return c.parseSimilarResponse(resp.Body)
-}
-
-func (c *Client) parseSimilarResponse(r io.Reader) ([]Tag, error) {
 	var similarResponse struct {
-		Success bool
-		Error   string
 		Similar []Tag
 	}
-	if err := json.NewDecoder(r).Decode(&similarResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !similarResponse.Success {
-		return nil, ErrTagbox(similarResponse.Error)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, &similarResponse)
+	if err != nil {
+		return nil, err
 	}
 	return similarResponse.Similar, nil
 }

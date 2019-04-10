@@ -2,12 +2,12 @@
 package tagbox
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"time"
 
 	"github.com/machinebox/sdk-go/boxutil"
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -58,12 +58,8 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("tagbox", c.HTTPClient).DoUnmarshal(req, &info)
 	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return nil, err
 	}
 	return &info, nil
@@ -75,11 +71,4 @@ type CheckResponse struct {
 	Tags []Tag `json:"tags"`
 	// CustomTags are the custom tags (previously teach) that match
 	CustomTags []Tag `json:"custom_tags"`
-}
-
-// ErrTagbox represents an error from Tagbox.
-type ErrTagbox string
-
-func (e ErrTagbox) Error() string {
-	return "tagbox: " + string(e)
 }

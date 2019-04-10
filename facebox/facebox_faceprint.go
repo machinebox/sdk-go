@@ -3,10 +3,10 @@ package facebox
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/url"
 
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -39,36 +39,19 @@ func (c *Client) CompareFaceprints(target string, faceprintCandidates []string) 
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-
-	resp, err := c.HTTPClient.Do(req)
+	var compareFaceprintsResponse struct {
+		Confidences []float64
+	}
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &compareFaceprintsResponse)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCompareFacesResponse(resp.Body)
+	return compareFaceprintsResponse.Confidences, nil
 }
 
 type compareFaceprintRequest struct {
 	Faceprints []string `json:"faceprints"`
 	Target     string   `json:"target"`
-}
-
-func (c *Client) parseCompareFacesResponse(r io.Reader) ([]float64, error) {
-	var compareFaceprintsResponse struct {
-		Success     bool
-		Error       string
-		Confidences []float64
-	}
-	if err := json.NewDecoder(r).Decode(&compareFaceprintsResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !compareFaceprintsResponse.Success {
-		return nil, ErrFacebox(compareFaceprintsResponse.Error)
-	}
-	return compareFaceprintsResponse.Confidences, nil
 }
 
 type checkFaceprintRequest struct {
@@ -101,29 +84,12 @@ func (c *Client) CheckFaceprints(faceprints []string) ([]Face, error) {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	return c.parseCheckFaceprintResponse(resp.Body)
-}
-
-func (c *Client) parseCheckFaceprintResponse(r io.Reader) ([]Face, error) {
 	var checkResponse struct {
-		Success    bool
-		Error      string
 		Faceprints []Face
 	}
-	if err := json.NewDecoder(r).Decode(&checkResponse); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !checkResponse.Success {
-		return nil, ErrFacebox(checkResponse.Error)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &checkResponse)
+	if err != nil {
+		return nil, err
 	}
 	return checkResponse.Faceprints, nil
 }

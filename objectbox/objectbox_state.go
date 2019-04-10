@@ -40,8 +40,7 @@ func (c *Client) PostState(r io.Reader) error {
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	client := mbhttp.New("objectbox", c.HTTPClient)
-	_, err = client.Do(req, nil)
+	_, err = mbhttp.New("objectbox", c.HTTPClient).DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
@@ -70,7 +69,7 @@ func (c *Client) PostStateURL(stateURL *url.URL) error {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	client := mbhttp.New("objectbox", c.HTTPClient)
-	_, err = client.Do(req, nil)
+	_, err = client.DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}

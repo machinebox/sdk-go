@@ -66,7 +66,7 @@ func (c *Client) PostState(ctx context.Context, r io.Reader) (Model, error) {
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	_, err = c.client.Do(req, &model)
+	_, err = c.client.DoUnmarshal(req, &model)
 	if err != nil {
 		return model, err
 	}
@@ -96,7 +96,7 @@ func (c *Client) PostStateURL(ctx context.Context, stateURL *url.URL) (Model, er
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req = req.WithContext(ctx)
-	_, err = c.client.Do(req, &model)
+	_, err = c.client.DoUnmarshal(req, &model)
 	if err != nil {
 		return model, err
 	}

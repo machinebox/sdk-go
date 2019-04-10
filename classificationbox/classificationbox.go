@@ -49,7 +49,7 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, &info)
+	_, err = c.client.DoUnmarshal(req, &info)
 	if err != nil {
 		return nil, err
 	}

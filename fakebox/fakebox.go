@@ -2,11 +2,12 @@
 package fakebox
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 
 	"github.com/machinebox/sdk-go/boxutil"
 	"github.com/pkg/errors"
@@ -103,15 +104,8 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("fakebox", c.HTTPClient).DoUnmarshal(req, &info)
 	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return nil, err
 	}
 	return &info, nil
@@ -137,38 +131,18 @@ func (c *Client) Check(title string, content string, u *url.URL) (*Analysis, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
 	var response struct {
-		Success bool
-		Error   string
-
 		Title   Title   `json:"title"`
 		Content Content `json:"content"`
 		Domain  Domain  `json:"domain"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return nil, ErrFakebox(response.Error)
+	_, err = mbhttp.New("fakebox", c.HTTPClient).DoUnmarshal(req, &response)
+	if err != nil {
+		return nil, err
 	}
 	return &Analysis{
 		Title:   response.Title,
 		Content: response.Content,
 		Domain:  response.Domain,
 	}, nil
-}
-
-// ErrFakebox represents an error from Fakebox.
-type ErrFakebox string
-
-func (e ErrFakebox) Error() string {
-	return "fakebox: " + string(e)
 }

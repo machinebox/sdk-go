@@ -38,7 +38,7 @@ func (c *Client) Teach(ctx context.Context, modelID string, example Example) err
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, nil)
+	_, err = c.client.DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (c *Client) TeachMulti(ctx context.Context, modelID string, examples []Exam
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, nil)
+	_, err = c.client.DoUnmarshal(req, nil)
 	if err != nil {
 		return err
 	}

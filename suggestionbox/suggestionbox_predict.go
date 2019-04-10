@@ -61,7 +61,7 @@ func (c *Client) Predict(ctx context.Context, modelID string, request PredictReq
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	_, err = c.client.Do(req, &response)
+	_, err = c.client.DoUnmarshal(req, &response)
 	if err != nil {
 		return response, err
 	}

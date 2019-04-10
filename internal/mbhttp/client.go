@@ -28,9 +28,9 @@ func New(boxname string, client *http.Client) *Client {
 	}
 }
 
-// Do makes the request and unmarshals the response into v.
+// DoUnmarshal makes the request and unmarshals the response into v.
 // The Body in the Response will be closed after calling this method.
-func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
+func (c *Client) DoUnmarshal(req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -39,6 +39,12 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "read response data")
+	}
+	if len(b) == 0 {
+		if resp.StatusCode < 200 || resp.StatusCode >= 400 {
+			return nil, errors.Errorf("%s: %s", c.boxname, resp.Status)
+		}
+		return resp, nil
 	}
 	var o struct {
 		Success bool

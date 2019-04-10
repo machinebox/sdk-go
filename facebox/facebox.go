@@ -2,11 +2,12 @@
 package facebox
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 
 	"github.com/machinebox/sdk-go/boxutil"
 )
@@ -71,23 +72,9 @@ func (c *Client) Info() (*boxutil.Info, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
+	_, err = mbhttp.New("facebox", c.HTTPClient).DoUnmarshal(req, &info)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
-		return nil, err
-	}
 	return &info, nil
-}
-
-// ErrFacebox represents an error from Facebox.
-type ErrFacebox string
-
-func (e ErrFacebox) Error() string {
-	return "facebox: " + string(e)
 }

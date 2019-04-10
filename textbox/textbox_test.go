@@ -18,6 +18,7 @@ func TestInfo(t *testing.T) {
 		is.Equal(r.URL.Path, "/info")
 		is.Equal(r.Header.Get("Accept"), "application/json; charset=utf-8")
 		io.WriteString(w, `{
+			"success": true,
 			"name": "textbox",
 			"version": 1,
 			"build": "abcdefg",
