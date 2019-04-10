@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/machinebox/sdk-go/boxutil"
+	"github.com/machinebox/sdk-go/internal/mbhttp"
 	"github.com/pkg/errors"
 )
 
@@ -121,35 +122,16 @@ func (c *Client) Check(r io.Reader) (*Analysis, error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.New(resp.Status)
-	}
 	var response struct {
-		Success   bool
-		Error     string
 		Sentences []Sentence `json:"sentences"`
 		Keywords  []Keyword  `json:"keywords"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, errors.Wrap(err, "decoding response")
-	}
-	if !response.Success {
-		return nil, ErrTextbox(response.Error)
+	_, err = mbhttp.New("textbox", c.HTTPClient).DoUnmarshal(req, &response)
+	if err != nil {
+		return nil, err
 	}
 	return &Analysis{
 		Sentences: response.Sentences,
 		Keywords:  response.Keywords,
 	}, nil
-}
-
-// ErrTextbox represents an error from Textbox.
-type ErrTextbox string
-
-func (e ErrTextbox) Error() string {
-	return "textbox: " + string(e)
 }

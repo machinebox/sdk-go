@@ -76,10 +76,3 @@ type CheckResponse struct {
 	// CustomTags are the custom tags (previously teach) that match
 	CustomTags []Tag `json:"custom_tags"`
 }
-
-// ErrTagbox represents an error from Tagbox.
-type ErrTagbox string
-
-func (e ErrTagbox) Error() string {
-	return "tagbox: " + string(e)
-}

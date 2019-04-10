@@ -71,13 +71,6 @@ func (c *Client) Info() (*boxutil.Info, error) {
 	return &info, nil
 }
 
-// ErrObjectbox represents an error from Objectbox.
-type ErrObjectbox string
-
-func (e ErrObjectbox) Error() string {
-	return "objectbox: " + string(e)
-}
-
 // CheckResponse is all the data from /check request to objectbox
 type CheckResponse struct {
 	Detectors []CheckDetectorResponse `json:"detectors"`
